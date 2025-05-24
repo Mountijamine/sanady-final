@@ -1,9 +1,12 @@
 package org.example.charityproject1.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.example.charityproject1.model.ActionCharite;
 import org.example.charityproject1.model.Organisations;
+import org.example.charityproject1.repository.ActionChariteRepository;
 import org.example.charityproject1.repository.OrganisationsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -21,12 +27,16 @@ public class OrganisationController {
 
     @Autowired
     private OrganisationsRepository organisationsRepository;
+    
+    @Autowired
+    private ActionChariteRepository actionChariteRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
+        // Code existant pour récupérer l'organisation
         String orgId = (String) session.getAttribute("org_identifier");
         if (orgId == null) {
             return "redirect:/auth/login/organisation";
@@ -38,7 +48,38 @@ public class OrganisationController {
             return "redirect:/auth/login/organisation";
         }
 
-        model.addAttribute("organisation", orgOptional.get());
+        Organisations organisation = orgOptional.get();
+        model.addAttribute("organisation", organisation);
+        model.addAttribute("profileError", session.getAttribute("profileError"));
+        session.removeAttribute("profileError");
+        model.addAttribute("passwordError", session.getAttribute("passwordError"));
+        session.removeAttribute("passwordError");
+
+        // AJOUT : Récupérer les actions de charité de cette organisation
+        List<ActionCharite> actions = actionChariteRepository.findByOrganisationIdOrderByDateCreationDesc(organisation.getIdOrganisation());
+        model.addAttribute("actions", actions);
+        
+        // AJOUT : Calculs statistiques pour le dashboard
+        int actionsEnCours = 0;
+        int actionsTerminees = 0;
+        int totalBeneficiaires = 0;
+        float montantTotal = 0;
+        
+        for (ActionCharite action : actions) {
+            if (action.isActive()) {
+                actionsEnCours++;
+            } else {
+                actionsTerminees++;
+            }
+            totalBeneficiaires += action.getNombreParticipants();
+            montantTotal += action.getMontantActuel();
+        }
+        
+        model.addAttribute("actionsEnCours", actionsEnCours);
+        model.addAttribute("actionsTerminees", actionsTerminees);
+        model.addAttribute("totalBeneficiaires", totalBeneficiaires);
+        model.addAttribute("montantTotal", montantTotal);
+        
         return "organisation/dashboard";
     }
 
@@ -96,6 +137,7 @@ public class OrganisationController {
         }
 
         Organisations organisation = orgOptional.get();
+        organisation.setValideParAdmin(false);
 
         // Check if ID changed and is unique
         if (!newNumeroIdentif.equals(orgId)) {
@@ -209,5 +251,78 @@ public class OrganisationController {
         session.invalidate();
         redirectAttributes.addFlashAttribute("message", "Votre mot de passe a été modifié avec succès. Veuillez vous reconnecter.");
         return "redirect:/auth/login/organisation";
+    }
+    
+    @PostMapping("/createAction")
+    public String createAction(@RequestParam("titre") String titre,
+                              @RequestParam("description") String description,
+                              @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+                              @RequestParam("lieu") String lieu,
+                              @RequestParam("objectifCollecte") float objectifCollecte,
+                              @RequestParam(value = "nombreParticipants", required = false, defaultValue = "0") int nombreParticipants,
+                              @RequestParam("categorieId") String categorieId,
+                              @RequestParam(value = "mediaFiles", required = false) MultipartFile[] mediaFiles,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+        
+        String orgId = (String) session.getAttribute("org_identifier");
+        if (orgId == null) {
+            return "redirect:/auth/login/organisation";
+        }
+
+        Optional<Organisations> orgOptional = organisationsRepository.findByNumeroIdentif(orgId);
+        if (!orgOptional.isPresent()) {
+            session.invalidate();
+            return "redirect:/auth/login/organisation";
+        }
+        
+        Organisations organisation = orgOptional.get();
+        
+        try {
+            // Créer l'action de charité
+            ActionCharite action = new ActionCharite();
+            action.setTitre(titre);
+            action.setDescription(description);
+            action.setDateAction(date);
+            action.setLieu(lieu);
+            action.setObjectifCollecte(objectifCollecte);
+            action.setMontantActuel(0.0f); // Montant initial à 0
+            action.setNombreParticipants(nombreParticipants);
+            action.setCategorie(categorieId);
+            action.setOrganisationId(organisation.getIdOrganisation());
+            action.setActive(true);
+            action.setDateCreation(new Date()); // Date actuelle
+            
+            // Traiter les images
+            if (mediaFiles != null && mediaFiles.length > 0) {
+                List<String> mediaUrls = new ArrayList<>();
+                for (MultipartFile file : mediaFiles) {
+                    if (!file.isEmpty()) {
+                        // Conversion en Base64
+                        String mediaBase64 = Base64.getEncoder().encodeToString(file.getBytes());
+                        mediaUrls.add("data:" + file.getContentType() + ";base64," + mediaBase64);
+                    }
+                }
+                action.setMediaUrls(mediaUrls);
+            }
+            
+            // Sauvegarder l'action
+            actionChariteRepository.save(action);
+            
+            // Ajouter message de succès
+            redirectAttributes.addFlashAttribute("success", "Action créée avec succès");
+            
+            // Logs pour débogage
+            System.out.println("Action sauvegardée avec ID: " + action.getIdAction());
+            
+            return "redirect:/organisation/dashboard";
+            
+        } catch (Exception e) {
+            // Log de l'erreur
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("actionError", "create-error");
+            redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la création de l'action: " + e.getMessage());
+            return "redirect:/organisation/dashboard";
+        }
     }
 }

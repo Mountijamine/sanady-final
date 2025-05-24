@@ -3,29 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription Super Admin</title>
+    <title>Inscription Super Admin | SANADY</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --text-dark: #344767;
+            --text-light: #546E7A;
+            --bg-light: #f8f9fa;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background-color: var(--bg-light);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .register-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .register-header h3 {
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        
+        .register-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        .register-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-control {
+            height: 50px;
+            padding-left: 45px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .login-link a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+    </style>
 </head>
 <body>
-<h1>Inscription Super Admin</h1>
+    <div class="register-container">
+        <div class="register-header">
+            <!-- Logo can be added here -->
+            <img src="https://via.placeholder.com/150x50/ffffff/4CAF50?text=SANADY" alt="SANADY" class="logo">
+            <h3>Inscription Super Admin</h3>
+            <p>Créez votre compte administrateur pour gérer la plateforme</p>
+        </div>
+        
+        <div th:if="${message != null}" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${message}"></span>
+        </div>
+        
+        <form th:action="@{/auth/register/superadmin}" method="post">
+            <div class="form-group">
+                <label for="nom" class="form-label">Nom complet</label>
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="nom" name="nom" class="form-control" placeholder="Entrez votre nom" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">Adresse email</label>
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="email" name="email" class="form-control" placeholder="exemple@sanady.org" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Mot de passe</label>
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Minimum 8 caractères" required>
+            </div>
+            
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                <label class="form-check-label" for="termsCheck">J'accepte les conditions d'utilisation</label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-user-plus me-2"></i> Créer mon compte
+            </button>
+        </form>
+        
+        <div class="login-link">
+            <p>Vous avez déjà un compte ? <a th:href="@{/auth/login/superadmin}">Connectez-vous ici</a></p>
+        </div>
+    </div>
 
-<form th:action="@{/auth/register/superadmin}" method="post">
-
-    <label for="nom">Nom :</label>
-    <input type="text" id="nom" name="nom" required><br><br>
-
-    <label for="email">Email :</label>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="password">Mot de passe :</label>
-    <input type="password" id="password" name="password" required><br><br>
-
-    <button type="submit">S'inscrire</button>
-</form>
-
-<p th:if="${message != null}" th:text="${message}" style="color: red;"></p>
-
-<p>
-    Vous avez déjà un compte ? <a th:href="@{/auth/login/superadmin}">Connectez-vous ici</a>.
-</p>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

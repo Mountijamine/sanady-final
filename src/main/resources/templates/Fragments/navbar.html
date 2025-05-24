@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <!-- Fragment pour les métadonnées et liens communs -->
+    <th:block th:fragment="head(title)">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title th:text="${title} + ' - SANADY'">SANADY</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </th:block>
+
+    <!-- Fragment pour les variables CSS communes -->
+    <th:block th:fragment="cssVars">
+        <style>
+            :root {
+                --primary: #4CAF50;
+                --primary-dark: #388E3C;
+                --primary-light: #A5D6A7;
+                --secondary: #F9A825;
+                --text-dark: #344767;
+                --text-light: #546E7A;
+                --bg-light: #f0f2f5;
+                --white: #ffffff;
+                --border-radius: 8px;
+                --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                --card-border: 1px solid rgba(0, 0, 0, 0.05);
+                --danger: #f44336;
+                --warning: #ff9800;
+                --success: #4caf50;
+                --info: #2196f3;
+            }
+
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: var(--bg-light);
+                color: var(--text-dark);
+                min-height: 100vh;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-family: 'Poppins', sans-serif;
+                color: var(--text-dark);
+            }
+
+            /* Styles pour la navbar */
+            .navbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 30px;
+                background-color: var(--white);
+                box-shadow: var(--box-shadow);
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+            }
+
+            .logo-container {
+                display: flex;
+                align-items: center;
+            }
+
+            .logo {
+                height: 45px;
+                width: auto;
+                border-radius: 8px;
+                object-fit: contain;
+                margin-right: 20px;
+                transition: transform 0.3s ease;
+            }
+
+            .logo:hover {
+                transform: scale(1.05);
+            }
+
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .nav-links a {
+                color: var(--text-dark);
+                text-decoration: none;
+                font-weight: 500;
+                padding: 8px 12px;
+                border-radius: var(--border-radius);
+                transition: all 0.3s ease;
+            }
+
+            .nav-links a:hover, .nav-links a.active {
+                color: var(--primary);
+                background-color: rgba(76, 175, 80, 0.1);
+            }
+
+            .right-section {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .user-auth-link {
+                color: var(--text-dark);
+                text-decoration: none;
+                font-weight: 500;
+                padding: 8px 15px;
+                border-radius: var(--border-radius);
+                transition: all 0.3s ease;
+            }
+
+            .user-auth-link:hover {
+                color: var(--primary);
+                background-color: rgba(76, 175, 80, 0.1);
+            }
+
+            .donate-reminder {
+                background-color: var(--primary);
+                color: white;
+                padding: 10px 20px;
+                border-radius: var(--border-radius);
+                text-decoration: none;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+            }
+
+            .donate-reminder:hover {
+                background-color: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3);
+            }
+
+            /* Styles pour les dropdowns */
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: var(--white);
+                min-width: 200px;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+                border-radius: var(--border-radius);
+                padding: 10px 0;
+                z-index: 1;
+                top: 100%;
+                left: 0;
+                margin-top: 5px;
+            }
+
+            .dropdown:hover .dropdown-content {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .dropdown-item {
+                color: var(--text-dark);
+                padding: 10px 20px;
+                text-decoration: none;
+                display: block;
+                transition: all 0.2s ease;
+            }
+
+            .dropdown-item:hover {
+                background-color: rgba(76, 175, 80, 0.1);
+                color: var(--primary);
+            }
+
+            /* Animation pour le dropdown */
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            /* Style pour les drapeaux dans le sélecteur de langue */
+            .flag-icon {
+                width: 18px;
+                height: 12px;
+                margin-right: 5px;
+                vertical-align: middle;
+            }
+
+            .create-btn {
+                background-color: var(--secondary) !important;
+                color: white !important;
+                padding: 10px 20px !important;
+                border-radius: var(--border-radius);
+                font-weight: 600;
+                box-shadow: 0 4px 10px rgba(249, 168, 37, 0.2);
+            }
+
+            .create-btn:hover {
+                background-color: #f57f17 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(249, 168, 37, 0.3);
+            }
+        </style>
+    </th:block>
+<!--  Navbar user  -->
+<nav class="navbar sticky-navbar" th:fragment="userNavbar(user)">
+    <div class="navbar-left">
+        <div class="logo-circle">
+            <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Logo utilisateur">
+            <img th:unless="${user.logoPath != null}" src="https://placehold.co/40" alt="Logo par défaut">
+        </div>
+        <div class="org-name" th:text="${user.nom}">Nom de l'Utilisateur</div>
+    </div>
+
+    <div class="navbar-right">
+        <span class="id-info" th:text="${user.email}">email@example.com</span>
+
+        <!-- Notification  -->
+        <div class="notification">
+            <a href="#" class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </a>
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </div>
+    </div>
+</nav>
+    <!-- Fragment pour la navbar du site public -->
+    <th:block th:fragment="publicNavbar">
+        <nav class="navbar">
+            <div class="logo-container">
+                <a href="/">
+                    <img src="Sanadyimage.jpeg" alt="SANADY" class="logo">
+                </a>
+                <div class="nav-links">
+                    <a href="/" th:classappend="${activeTab == 'home'} ? 'active' : ''">Accueil</a>
+                    <div class="dropdown">
+                        <a href="/campaigns" th:classappend="${activeTab == 'campaigns'} ? 'active' : ''">Campagnes <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="/campaigns/all" class="dropdown-item">Toutes les campagnes</a>
+                            <a href="/campaigns/urgent" class="dropdown-item">Campagnes urgentes</a>
+                            <a href="/campaigns/palestine" class="dropdown-item">Soutien à Palestine</a>
+                        </div>
+                    </div>
+                    <a href="/auth/register/organisation" class="create-btn">Créer votre site</a>
+                </div>
+            </div>
+            <div class="right-section">
+                <a href="/auth/login/user" class="user-auth-link">Connexion</a>
+                <div class="language-currency">
+                    <div class="language-select dropdown">
+                        <span><img id="currentFlag" src="https://flagcdn.com/fr.svg" class="flag-icon" alt="FR">FR <i class="fas fa-chevron-down"></i></span>
+                        <div class="dropdown-content">
+                            <a href="#" class="dropdown-item" data-lang-code="fr" onclick="changeLanguage('fr')"><img src="https://flagcdn.com/fr.svg" class="flag-icon" alt="FR"> Français</a>
+                            <a href="#" class="dropdown-item" data-lang-code="ar" onclick="changeLanguage('ar')"><img src="https://flagcdn.com/sa.svg" class="flag-icon" alt="AR"> العربية</a>
+                            <a href="#" class="dropdown-item" data-lang-code="en" onclick="changeLanguage('en')"><img src="https://flagcdn.com/gb.svg" class="flag-icon" alt="EN"> English</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="/donate" class="donate-reminder">
+                    <i class="fas fa-heart"></i> Faire un don
+                </a>
+            </div>
+        </nav>
+    </th:block>
+
+    <!-- Fragment pour la navbar du dashboard organisation -->
+    <th:block th:fragment="orgNavbar(organisation)">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <div class="logo-circle">
+                    <img th:if="${organisation.logo}" th:src="'data:image/png;base64,' + ${organisation.logo}" alt="Logo de l'organisation">
+                    <img th:unless="${organisation.logo}" src="https://via.placeholder.com/40" alt="Logo par défaut">
+                </div>
+                <div class="org-name" th:text="${organisation.nom}">Nom de l'Organisation</div>
+            </div>
+
+            <div class="navbar-right">
+                <span class="id-info" th:text="'ID: ' + ${organisation.numeroIdentif}">ID: 123456</span>
+
+                <!-- Notification Bell -->
+                <div class="notification">
+                    <a href="#" class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </a>
+                </div>
+
+                <div class="dropdown">
+                    <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
+                        <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
+                        <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </th:block>
+
+    <!-- Fragment pour la sub-navbar du dashboard organisation -->
+    <th:block th:fragment="orgSubNavbar">
+        <div class="sub-navbar">
+            <a href="#section1" class="sub-nav-item active">
+                <i class="fas fa-chart-line"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="#section2" class="sub-nav-item">
+                <i class="fas fa-tasks"></i>
+                <span>Lancer des Actions</span>
+            </a>
+            <a href="#section3" class="sub-nav-item">
+                <i class="fas fa-users"></i>
+                <span>Actions Archivées</span>
+            </a>
+        </div>
+    </th:block>
+
+    <!-- Fragment pour le pied de page -->
+    <th:block th:fragment="footer">
+        <footer class="footer">
+            <div class="footer-bottom">
+                &copy; <span th:text="${#dates.year(#dates.createNow())}">2025</span> SANADY. Tous droits réservés.
+            </div>
+        </footer>
+    </th:block>
+
+    <!-- Fragment pour les scripts communs -->
+    <th:block th:fragment="commonScripts">
+        <script>
+            function changeLanguage(langCode) {
+                document.documentElement.setAttribute('lang', langCode);
+
+                const allLangElements = document.querySelectorAll('[data-lang]');
+                allLangElements.forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                const newActiveLangElements = document.querySelectorAll(`[data-lang="${langCode}"]`);
+                newActiveLangElements.forEach(el => {
+                    el.classList.add('active');
+                });
+
+                const langItems = document.querySelectorAll('.dropdown-item[data-lang-code]');
+                langItems.forEach(item => {
+                    item.classList.remove('lang-active');
+                });
+
+                const activeLangItem = document.querySelector(`.dropdown-item[data-lang-code="${langCode}"]`);
+                if (activeLangItem) {
+                    activeLangItem.classList.add('lang-active');
+                }
+
+                const flagSrc = {
+                    'fr': 'https://flagcdn.com/fr.svg',
+                    'ar': 'https://flagcdn.com/sa.svg',
+                    'en': 'https://flagcdn.com/gb.svg'
+                };
+
+                const currentFlag = document.getElementById('currentFlag');
+                if (currentFlag) {
+                    currentFlag.src = flagSrc[langCode];
+                }
+
+                if (langCode === 'ar') {
+                    document.body.classList.add('rtl');
+                } else {
+                    document.body.classList.remove('rtl');
+                }
+
+                localStorage.setItem('preferredLanguage', langCode);
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const storedLang = localStorage.getItem('preferredLanguage');
+                if (storedLang) {
+                    changeLanguage(storedLang);
+                }
+            });
+        </script>
+    </th:block>
+
+    <!-- Fragment pour les scripts du dashboard organisation -->
+    <th:block th:fragment="dashboardScripts">
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Dropdown toggle functionality
+                const dropdownToggle = document.getElementById('dropdownToggle');
+                const dropdownContent = document.querySelector('.dropdown-content');
+
+                if (dropdownToggle && dropdownContent) {
+                    dropdownToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        dropdownContent.classList.toggle('show');
+                    });
+
+                    // Close dropdown when clicking outside
+                    window.addEventListener('click', function(e) {
+                        if (!e.target.matches('.param-icon') && !e.target.matches('.fa-cog')) {
+                            if (dropdownContent.classList.contains('show')) {
+                                dropdownContent.classList.remove('show');
+                            }
+                        }
+                    });
+                }
+
+                // Sub-nav active state
+                const subNavItems = document.querySelectorAll('.sub-nav-item');
+                subNavItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        subNavItems.forEach(navItem => {
+                            navItem.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    });
+                });
+
+                // Modal de création d'action
+                const createActionBtn = document.querySelector('.create-action-btn');
+                const createActionModal = document.getElementById('createActionModal');
+                const closeActionModal = document.getElementById('closeActionModal');
+                
+                if (createActionBtn && createActionModal) {
+                    createActionBtn.addEventListener('click', function() {
+                        createActionModal.style.display = 'block';
+                    });
+                }
+                
+                if (closeActionModal) {
+                    closeActionModal.addEventListener('click', function() {
+                        createActionModal.style.display = 'none';
+                    });
+                }
+                
+                // Fermer le modal en cliquant à l'extérieur
+                window.addEventListener('click', function(e) {
+                    if (e.target == createActionModal) {
+                        createActionModal.style.display = 'none';
+                    }
+                });
+                
+                // Prévisualisation des images
+                const mediaFilesInput = document.getElementById('mediaFiles');
+                const filePreview = document.getElementById('filePreview');
+                
+                if (mediaFilesInput && filePreview) {
+                    mediaFilesInput.addEventListener('change', function() {
+                        filePreview.innerHTML = '';
+                        
+                        for (const file of this.files) {
+                            if (file.type.match('image.*')) {
+                                const reader = new FileReader();
+                                
+                                reader.onload = function(e) {
+                                    const div = document.createElement('div');
+                                    div.className = 'file-preview-item';
+                                    
+                                    const img = document.createElement('img');
+                                    img.src = e.target.result;
+                                    
+                                    const removeBtn = document.createElement('button');
+                                    removeBtn.className = 'file-remove-btn';
+                                    removeBtn.innerHTML = '&times;';
+                                    removeBtn.addEventListener('click', function() {
+                                        div.remove();
+                                    });
+                                    
+                                    div.appendChild(img);
+                                    div.appendChild(removeBtn);
+                                    filePreview.appendChild(div);
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }
+                    });
+                }
+                
+                // Lier la barre de sous-navigation pour "Lancer des Actions"
+                const actionNavLink = document.querySelector('.sub-nav-item[href="#section2"]');
+                if (actionNavLink) {
+                    actionNavLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        createActionModal.style.display = 'block';
+                    });
+                }
+            });
+        </script>
+    </th:block>
+</head>
+<body>
+<!-- Ce contenu ne sera jamais affiché car nous n'utilisons que des fragments -->
+<p>Ce fichier contient uniquement des fragments Thymeleaf et n'est pas destiné à être affiché directement.</p>
+</body>
+</html>

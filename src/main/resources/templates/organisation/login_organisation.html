@@ -1,32 +1,228 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion Organisation</title>
+  <title>Connexion Organisation - SANADY</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --primary-dark: #388E3C;
+      --primary-light: #A5D6A7;
+      --secondary: #F9A825;
+      --text-dark: #344767;
+      --text-light: #546E7A;
+      --bg-light: #f0f2f5; /* Slightly different background */
+      --white: #ffffff;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --input-border: #d2d6da;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; } /* Ensure body takes full height */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column; /* Stack navbar, content, footer */
+    }
+    h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+
+    /* Navbar Styles (Consistent) */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 60px;
+      background-color: var(--white);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid #eee;
+      position: sticky; /* Keep sticky */
+      top: 0;
+      z-index: 1000;
+      flex-shrink: 0; /* Prevent navbar from shrinking */
+    }
+    .logo-container { display: flex; align-items: center; flex-shrink: 0; }
+    .logo { height: 45px; margin-right: 40px; }
+    .nav-links { display: flex; align-items: center; flex-grow: 1; justify-content: flex-start; }
+    .nav-links a:not(.create-btn) { color: var(--text-dark); text-decoration: none; margin: 0 18px; font-weight: 500; font-size: 15px; transition: color 0.3s ease; position: relative; padding: 5px 0; }
+    .nav-links a:not(.create-btn)::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 50%; background-color: var(--primary); transition: all 0.3s ease; transform: translateX(-50%); }
+    .nav-links a:not(.create-btn):hover::after { width: 100%; }
+    .nav-links a:hover:not(.create-btn) { color: var(--primary); }
+    .create-btn { background-color: var(--primary); color: white !important; padding: 10px 20px; border-radius: var(--border-radius); margin-left: 25px; transition: all 0.3s; font-weight: 600; text-decoration: none; }
+    .create-btn:hover { background-color: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3); }
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown i { margin-left: 5px; font-size: 12px; }
+    .dropdown-content { display: none; position: absolute; background-color: var(--white); min-width: 160px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); z-index: 1; border-radius: var(--border-radius); border: 1px solid #eee; right: 0; top: 100%; margin-top: 8px; overflow: hidden; opacity: 0; transform: translateY(5px); transition: all 0.25s ease-out; }
+    .dropdown:hover .dropdown-content { display: block; opacity: 1; transform: translateY(0); }
+    .dropdown-item { padding: 12px 16px; text-decoration: none; display: block; color: var(--text-dark); transition: all 0.2s; }
+    .dropdown-item:hover { background-color: var(--primary-light); color: var(--text-dark); }
+
+    /* Main Content Area */
+    .main-content {
+      flex-grow: 1; /* Allows this area to take up remaining space */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px; /* Add some padding */
+    }
+
+    /* Form Container Styles */
+    .form-container {
+      width: 100%;
+      max-width: 400px; /* Slightly narrower */
+      padding: 35px 40px; /* Adjust padding */
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      text-align: center; /* Center align text inside */
+    }
+    .form-container h1 {
+      color: var(--text-dark); /* Darker heading */
+      margin-bottom: 25px;
+      font-size: 1.6rem; /* Slightly smaller heading */
+      font-weight: 600;
+    }
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left; /* Align labels and inputs left */
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.85rem;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="password"] {
+      width: 100%;
+      padding: 10px 12px; /* Adjust input padding */
+      border: 1px solid var(--input-border);
+      border-radius: 6px; /* Slightly smaller radius */
+      font-size: 0.95rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form-group input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15); /* Adjusted focus shadow */
+    }
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 11px 20px; /* Adjust button padding */
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 20px; /* Space before button */
+    }
+    .submit-btn:hover {
+      background-color: var(--primary-dark);
+    }
+    .message {
+      /* Keep previous message styling or adjust as needed */
+      text-align: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    .register-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer Styles (Consistent) */
+    .footer {
+      background-color: var(--text-dark);
+      color: #B0BEC5;
+      padding: 15px; /* Slightly less padding */
+      text-align: center;
+      font-size: 0.85rem;
+      flex-shrink: 0; /* Prevent footer from shrinking */
+    }
+  </style>
 </head>
 <body>
-<h1>Connexion Organisation</h1>
 
-<!-- Display error message if any -->
-<div th:if="${message}" th:text="${message}" style="color: red;"></div>
-
-<form action="/auth/login/organisation" method="POST">
-
-  <div>
-    <label for="username">Numéro d'identification :</label>
-    <input type="text" id="username" name="username" required />
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="logo-container">
+    <a href="/">
+      <img src="https://via.placeholder.com/150x50/ffffff/4CAF50?text=SANADY" alt="SANADY" class="logo">
+    </a>
+    <div class="nav-links">
+      <a href="/">Accueil</a>
+      <div class="dropdown">
+        <a href="#">Campagnes <i class="fas fa-chevron-down"></i></a>
+        <div class="dropdown-content">
+          <a href="#" class="dropdown-item">Toutes les campagnes</a>
+          <a href="#" class="dropdown-item">Campagnes urgentes</a>
+          <a href="#" class="dropdown-item">Soutien à Palestine</a>
+        </div>
+      </div>
+      <a href="/auth/register/organisation" class="create-btn">Créer votre site</a>
+    </div>
   </div>
-  <div>
-    <label for="password">Mot de passe :</label>
-    <input type="password" id="password" name="password" required />
-  </div>
-  <div>
-    <button type="submit">Se connecter</button>
-  </div>
-</form>
+  <!-- Add other navbar elements like language/login if needed -->
+</nav>
 
-<p>Vous n'avez pas de compte ? <a href="/auth/register/organisation">Inscrivez-vous ici</a>.</p>
+<!-- Main Content Area -->
+<div class="main-content">
+  <div class="form-container">
+    <h1>Connexion Organisation</h1>
+
+    <!-- Display error message if any -->
+    <div th:if="${message}" th:text="${message}" class="message"></div>
+
+    <form action="/auth/login/organisation" method="POST">
+      <div class="form-group">
+        <label for="username">Numéro d'identification</label>
+        <input type="text" id="username" name="username" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+      <div>
+        <button type="submit" class="submit-btn">Se connecter</button>
+      </div>
+    </form>
+
+    <p class="register-link">
+      Pas encore de compte ? <a href="/auth/register/organisation">Inscrivez-vous</a>.
+    </p>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  &copy; 2025 SANADY. Tous droits réservés.
+</footer>
 
 </body>
 </html>

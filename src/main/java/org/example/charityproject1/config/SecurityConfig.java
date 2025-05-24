@@ -42,8 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/organisation/dashboard").hasAuthority("ROLE_ORGANISATION")
                         .requestMatchers("/user/dashboard").hasAuthority("ROLE_USER")
 
-                        // API access restrictions
-                        .requestMatchers("/api/superadmin/**").hasAuthority("ROLE_SUPER_ADMIN")
+
+
 
                         // All other requests need authentication
                         .anyRequest().authenticated()

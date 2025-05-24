@@ -1,41 +1,1138 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr" id="htmlRoot">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page d'accueil</title>
-  <!-- Ajoutez ici votre CSS ou utilisez Bootstrap/Tailwind CSS -->
+  <title>SANADY</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --primary-dark: #388E3C;
+      --primary-light: #A5D6A7;
+      --secondary: #F9A825;
+      --secondary-dark: #F57F17;
+      --text-dark: #344767;
+      --text-light: #546E7A;
+      --bg-light: #f9f9f9;
+      --white: #ffffff;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 60px; /* Adjusted padding */
+      background-color: var(--white);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Softer shadow */
+      border-bottom: 1px solid #eee; /* Subtle bottom border */
+      position: sticky; /* Make navbar sticky */
+      top: 0;
+      z-index: 1000; /* Ensure it stays on top */
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0; /* Prevent logo from shrinking */
+    }
+
+    .logo {
+      height: 45px; /* Adjust height as needed for the new logo */
+      margin-right: 40px; /* Add space between logo and links */
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      flex-grow: 1; /* Allow links to take available space */
+      justify-content: flex-start; /* Align links to the start after logo */
+    }
+
+    .nav-links a:not(.create-btn) { /* Target links excluding the button */
+      color: var(--text-dark);
+      text-decoration: none;
+      margin: 0 18px; /* Increased margin */
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.3s ease;
+      position: relative; /* For potential active state indicator */
+      padding: 5px 0; /* Add vertical padding for hover/active area */
+    }
+
+    /* Optional: Add an underline effect on hover/active */
+    .nav-links a:not(.create-btn)::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -2px;
+        left: 50%;
+        background-color: var(--primary);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    .nav-links a:not(.create-btn):hover::after {
+        width: 100%;
+    }
+
+    /* Style for the active link (requires adding an 'active' class, possibly via JS or backend) */
+    /* .nav-links a.active { 
+        color: var(--primary);
+        font-weight: 600;
+    }
+    .nav-links a.active::after {
+        width: 100%;
+    } */
+
+    .nav-links a:hover:not(.create-btn) { /* Exclude button from default hover */
+      color: var(--primary);
+    }
+
+    .create-btn {
+      background-color: var(--primary);
+      color: white !important;
+      padding: 10px 20px; /* Slightly adjusted padding */
+      border-radius: var(--border-radius); /* Match global border radius */
+      margin-left: 25px; /* Ensure spacing from other links */
+      transition: all 0.3s;
+      box-shadow: none; /* Remove specific shadow, rely on hover */
+      font-weight: 600;
+    }
+
+    .create-btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px); /* Subtle lift */
+      box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3); /* Add shadow on hover */
+    }
+
+    .right-section {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    .user-auth-link {
+        color: var(--text-dark);
+        text-decoration: none;
+        margin-left: 15px; /* Add spacing */
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .user-auth-link:hover {
+        color: var(--primary);
+    }
+
+    .icon-link {
+      color: var(--text-light); /* Slightly lighter icon color */
+      margin: 0 10px; /* Adjusted margin */
+      font-size: 19px; /* Slightly larger icon */
+      transition: color 0.3s ease;
+    }
+
+    .language-currency {
+      display: flex;
+      align-items: center;
+      margin-left: 15px; /* Adjusted margin */
+    }
+
+    /* .currency-select, */ .language-select { /* Removed .currency-select from this rule */
+      display: flex;
+      align-items: center;
+      margin: 0 12px; /* Adjusted margin */
+      cursor: pointer;
+      color: var(--text-light);
+      font-size: 14px; /* Slightly smaller font */
+    }
+
+    /* .currency-select span, */ .language-select span { /* Removed .currency-select span from this rule */
+        display: flex;
+        align-items: center;
+    }
+
+    .flag-icon {
+      height: 20px;
+      margin-right: 5px;
+      border-radius: 3px;
+    }
+
+    .donate-reminder {
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      font-weight: 500; /* Adjusted weight */
+      transition: color 0.3s ease;
+      text-decoration: none; /* Ensure no underline */
+      margin-left: 15px; /* Add margin */
+      font-size: 14px;
+    }
+
+    .donate-reminder:hover {
+      color: var(--secondary-dark);
+    }
+
+    .donate-reminder i {
+      margin-right: 5px;
+      font-size: 16px;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown i {
+      margin-left: 5px;
+      font-size: 12px;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: var(--white);
+      min-width: 160px; /* Adjusted width */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Refined shadow */
+      z-index: 1;
+      border-radius: var(--border-radius);
+      border: 1px solid #eee; /* Add subtle border */
+      right: 0; /* Keep alignment */
+      top: 100%; /* Position below the trigger */
+      margin-top: 8px; /* Add space between trigger and dropdown */
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(5px); /* Adjusted animation */
+      transition: all 0.25s ease-out; /* Smoother transition */
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      color: var(--text-dark);
+      transition: all 0.2s;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--primary-light);
+      color: var(--text-dark);
+    }
+
+    .header-banner {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(76, 175, 80, 0.7)),
+                  url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1500&q=80') center/cover;
+      padding: 70px 20px;
+      color: white;
+      text-align: center;
+    }
+
+    .header-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header-title {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .header-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .header-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 20px 0;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .cta-button {
+      background-color: var(--white);
+      color: var(--primary);
+      border: none;
+      border-radius: 30px;
+      padding: 15px 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .main-content {
+      padding: 40px 20px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-title:after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 3px;
+      background-color: var(--primary);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .section-subtitle {
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+      margin-top: 20px;
+    }
+
+    .campaigns-section {
+      margin-top: 30px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: var(--box-shadow);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      color: var(--primary-light);
+      margin-bottom: 20px;
+    }
+
+    .empty-state-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text-dark);
+    }
+
+    .empty-state-text {
+      color: var(--text-light);
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .impact-section {
+      background-color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .impact-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .impact-item {
+      flex: 1;
+      min-width: 200px;
+      max-width: 250px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .impact-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .impact-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .impact-text {
+      color: var(--text-light);
+    }
+
+    .featured-cause {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                 url('https://images.unsplash.com/photo-1607758475278-f44a68f4d652?auto=format&fit=crop&w=1500&q=80') center/cover;
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+      margin: 60px 0;
+    }
+
+    .featured-cause-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .featured-cause-title {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+    }
+
+    .featured-cause-text {
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .testimonials {
+      padding: 60px 20px;
+      background-color: var(--bg-light);
+    }
+
+    .testimonial-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .testimonial-card {
+      flex: 1;
+      min-width: 280px;
+      max-width: 350px;
+      background-color: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: var(--box-shadow);
+      position: relative;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      color: var(--text-light);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .testimonial-quote {
+      font-size: 3rem;
+      color: var(--primary-light);
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      opacity: 0.3;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+
+    .testimonial-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+
+    .author-info {
+      line-height: 1.3;
+    }
+
+    .author-name {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .author-role {
+      font-size: 0.9rem;
+      color: var (--text-light);
+    }
+
+    .footer {
+      background-color: var(--text-dark);
+      color: white;
+      padding: 60px 20px 30px;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-section {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .footer-title {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .footer-title:after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 2px;
+      background-color: var(--primary);
+      bottom: -10px;
+      left: 0;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: #B0BEC5;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+
+    .social-icon:hover {
+      background-color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      margin-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      color: #B0BEC5;
+    }
+
+    /* Translations */
+    [data-lang] {
+      display: none;
+    }
+    [data-lang].active {
+      display: inline-block;
+    }
+
+    html[lang="ar"] {
+      direction: rtl;
+    }
+
+    html[lang="ar"] .navbar-left,
+    html[lang="ar"] .navbar-right {
+      flex-direction: row-reverse;
+    }
+
+    html[lang="ar"] .navbar-item i {
+      margin-right: 0;
+      margin-left: 5px;
+    }
+
+    @media (max-width: 992px) {
+      .navbar-right, .navbar-left {
+        flex-wrap: wrap;
+      }
+
+      .nav-links a {
+        margin: 5px 8px;
+      }
+
+      .create-btn {
+        margin: 5px;
+      }
+
+      .header-title {
+        font-size: 2rem;
+      }
+
+      .header-stats {
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .impact-grid, .testimonial-grid {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .footer-content {
+        flex-direction: column;
+      }
+    }
+
+    /* NOUVEAUX STYLES POUR LES SECTIONS AJOUTÉES */
+    
+    /* Section Comment ça marche */
+    .how-it-works {
+      padding: 70px 20px;
+      background-color: var(--white);
+    }
+
+    .process-steps {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .step-card {
+      flex: 1;
+      min-width: 220px;
+      max-width: 280px;
+      text-align: center;
+      padding: 30px 20px;
+      background-color: var(--bg-light);
+      border-radius: 12px;
+      box-shadow: var(--box-shadow);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 20px;
+    }
+
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text-dark);
+    }
+
+    .step-description {
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* Section Partenaires */
+    .partners-section {
+      padding: 60px 20px;
+      background-color: var(--bg-light);
+      text-align: center;
+    }
+
+    .partners-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 50px;
+      margin-top: 40px;
+    }
+
+    .partner-logo {
+      max-width: 150px;
+      height: auto;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      filter: grayscale(100%);
+    }
+
+    .partner-logo:hover {
+      opacity: 1;
+      filter: grayscale(0%);
+      transform: scale(1.1);
+    }
+
+    /* Section Newsletter */
+    .newsletter-section {
+      padding: 70px 20px;
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: white;
+      text-align: center;
+    }
+
+    .newsletter-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .newsletter-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .newsletter-text {
+      margin-bottom: 30px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .newsletter-input {
+      padding: 15px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .newsletter-input::placeholder {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .newsletter-input:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .newsletter-button {
+      background-color: var(--secondary);
+      color: white;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .newsletter-button:hover {
+      background-color: var(--secondary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+  </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Projet Charité</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Basculer la navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Accueil</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/">Connexion</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/">S'inscrire</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/">Inscrire une organisation</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/">Connexion organisation</a>
-      </li>
-    </ul>
+
+<nav class="navbar">
+  <div class="logo-container">
+    <a href="/">
+      <img src="image/Sanadyimage.jpeg" alt="SANADY" class="logo">
+    </a>
+
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <div class="dropdown">
+        <a href="/campaigns">Campagnes <i class="fas fa-chevron-down"></i></a>
+        <div class="dropdown-content">
+          <a href="/campaigns/all" class="dropdown-item">Toutes les campagnes</a>
+          <a href="/campaigns/urgent" class="dropdown-item">Campagnes urgentes</a>
+          <a href="/campaigns/palestine" class="dropdown-item">Soutien à Palestine</a>
+        </div>
+      </div>
+      <a href="/auth/register/organisation" class="create-btn">Créer votre site</a>
+    </div>
   </div>
 </nav>
 
-<div class="container">
-  <h1>Bienvenue sur le Projet Charité !</h1>
-  <p>C'est une page d'accueil publique où vous pouvez vous connecter ou vous inscrire pour commencer.</p>
+<!-- Header Banner -->
+<section class="header-banner">
+  <div class="header-content">
+    <h1 class="header-title">Ensemble, nous pouvons faire une différence</h1>
+    <p class="header-subtitle">Rejoignez notre communauté humanitaire et contribuez à un monde meilleur à travers des actions concrètes.</p>
+
+    <div class="header-stats">
+      <div class="stat-item">
+        <div class="stat-number">125,000+</div>
+        <div class="stat-label">Vies touchées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">1,200+</div>
+        <div class="stat-label">Projets réussis</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">85+</div>
+        <div class="stat-label">Pays aidés</div>
+      </div>
+    </div>
+
+    <a href="/auth/register/organisation" class="cta-button">Créer votre site <i class="fas fa-arrow-right"></i></a>
+  </div>
+</section>
+
+<!-- Main Content Area -->
+<div class="main-content">
+  <!-- Campaigns Section -->
+  <section class="campaigns-section">
+    <div class="section-header">
+      <h2 class="section-title">Nos campagnes actuelles</h2>
+      <p class="section-subtitle">Découvrez les initiatives qui nécessitent votre soutien immédiat et contribuez à faire une réelle différence.</p>
+    </div>
+
+    <!-- État vide pour les campagnes -->
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <i class="fas fa-heart"></i>
+      </div>
+      <h3 class="empty-state-title">Aucune campagne active pour le moment</h3>
+      <p class="empty-state-text">
+        De nouvelles campagnes humanitaires seront bientôt disponibles. Restez à l'écoute pour découvrir
+        comment vous pourrez participer et aider ceux qui en ont besoin.
+      </p>
+      <button class="cta-button">
+        <i class="fas fa-bell"></i> Recevoir des notifications
+      </button>
+    </div>
+  </section>
+
+  <!-- Impact Section -->
+  <section class="impact-section">
+    <div class="section-header">
+      <h2 class="section-title">Notre Impact</h2>
+      <p class="section-subtitle">Grâce à votre généreux soutien, nous avons pu réaliser un changement significatif dans la vie de milliers de personnes.</p>
+    </div>
+
+    <div class="impact-grid">
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-utensils"></i>
+        </div>
+        <div class="impact-number">840,000+</div>
+        <div class="impact-text">Repas servis</div>
+      </div>
+
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-house-medical"></i>
+        </div>
+        <div class="impact-number">23,000+</div>
+        <div class="impact-text">Soins médicaux fournis</div>
+      </div>
+
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-droplet"></i>
+        </div>
+        <div class="impact-number">120,000+</div>
+        <div class="impact-text">Personnes avec accès à l'eau</div>
+      </div>
+
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-school"></i>
+        </div>
+        <div class="impact-number">35,000+</div>
+        <div class="impact-text">Enfants scolarisés</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Cause -->
+  <section class="featured-cause">
+    <div class="featured-cause-content">
+      <h2 class="featured-cause-title">La crise humanitaire à Gaza continue</h2>
+      <p class="featured-cause-text">La situation à Gaza reste critique avec des besoins urgents en nourriture, eau potable, médicaments et abris. Votre soutien est plus important que jamais pour aider les familles touchées par cette crise sans précédent.</p>
+      <button class="cta-button">Comment vous pouvez aider <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <div class="section-header">
+      <h2 class="section-title">Témoignages</h2>
+      <p class="section-subtitle">Découvrez comment votre soutien transforme des vies et fait une réelle différence sur le terrain.</p>
+    </div>
+
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">❝</div>
+        <p class="testimonial-text">Grâce au soutien de SANADY, notre village a maintenant accès à l'eau potable. La différence que cela a fait dans la vie de nos enfants est inestimable.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80" alt="Fatima K." class="testimonial-avatar">
+          <div class="author-info">
+            <div class="author-name">Fatima K.</div>
+            <div class="author-role">Bénéficiaire, Jordanie</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">❝</div>
+        <p class="testimonial-text">Donner à SANADY m'a permis de voir l'impact direct de ma contribution. Leur transparence et leur engagement pour chaque cause est admirable.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=200&q=80" alt="Ahmed S." class="testimonial-avatar">
+          <div class="author-info">
+            <div class="author-name">Ahmed S.</div>
+            <div class="author-role">Donateur régulier</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">❝</div>
+        <p class="testimonial-text">En tant que bénévole pour SANADY, j'ai pu constater de mes propres yeux la différence que font les dons sur le terrain. Chaque contribution compte vraiment.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80" alt="Sarah M." class="testimonial-avatar">
+          <div class="author-info">
+            <div class="author-name">Sarah M.</div>
+            <div class="author-role">Bénévole</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comment ça marche Section -->
+  <section class="how-it-works">
+    <div class="section-header">
+      <h2 class="section-title">Comment ça marche</h2>
+      <p class="section-subtitle">Découvrez en trois étapes simples comment vous pouvez contribuer et faire une différence.</p>
+    </div>
+
+    <div class="process-steps">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-title">Inscrivez-vous</div>
+        <div class="step-description">Créez un compte gratuit sur notre plateforme en fournissant vos informations de base.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-title">Choisissez une campagne</div>
+        <div class="step-description">Parcourez nos campagnes en cours et sélectionnez celle qui vous tient à cœur.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-title">Faites un don</div>
+        <div class="step-description">Contribuez selon vos moyens, chaque don compte et fait une différence.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Partenaires Section -->
+  <section class="partners-section">
+    <div class="section-header">
+      <h2 class="section-title">Nos Partenaires</h2>
+      <p class="section-subtitle">Nous travaillons avec un réseau de partenaires fiables et dévoués pour maximiser notre impact.</p>
+    </div>
+
+    <div class="partners-container">
+      <img src="https://via.placeholder.com/150x50?text=Partenaire+1" alt="Partenaire 1" class="partner-logo">
+      <img src="https://via.placeholder.com/150x50?text=Partenaire+2" alt="Partenaire 2" class="partner-logo">
+      <img src="https://via.placeholder.com/150x50?text=Partenaire+3" alt="Partenaire 3" class="partner-logo">
+      <img src="https://via.placeholder.com/150x50?text=Partenaire+4" alt="Partenaire 4" class="partner-logo">
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <div class="newsletter-content">
+      <h2 class="newsletter-title">Restez informé et engagé</h2>
+      <p class="newsletter-text">Abonnez-vous à notre newsletter pour recevoir les dernières nouvelles, mises à jour et opportunités d'implication directement dans votre boîte mail.</p>
+
+      <div class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="Votre adresse e-mail" required>
+        <button class="newsletter-button">S'abonner <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </section>
 </div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3 class="footer-title">À propos de SANADY</h3>
+      <p style="margin-bottom: 15px; color: #B0BEC5; line-height: 1.6;">SANADY est une organisation humanitaire dédiée à fournir de l'aide et du soutien aux personnes dans le besoin à travers le monde.</p>
+      <div class="social-links">
+        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <h3 class="footer-title">Liens rapides</h3>
+      <ul class="footer-links">
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Qui sommes-nous</a></li>
+        <li><a href="#">Nos campagnes</a></li>
+        <li><a href="#">Comment aider</a></li>
+        <li><a href="#">Actualités</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3 class="footer-title">Nos campagnes</h3>
+      <ul class="footer-links">
+        <li><a href="#">Soutien à Gaza</a></li>
+        <li><a href="#">Eau potable pour tous</a></li>
+        <li><a href="#">Éducation des enfants</a></li>
+        <li><a href="#">Aide médicale d'urgence</a></li>
+        <li><a href="#">Secours alimentaire</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h3 class="footer-title">Contact</h3>
+      <ul class="footer-links">
+        <li><i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i> 123 Rue de la Charité, 75001 Paris</li>
+        <li><i class="fas fa-phone" style="margin-right: 8px;"></i> +33 1 23 45 67 89</li>
+        <li><i class="fas fa-envelope" style="margin-right: 8px;"></i> contact@sanady.org</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 SANADY. Tous droits réservés.</p>
+  </div>
+</footer>
+
+<script>
+  function changeLanguage(langCode) {
+    document.getElementById('htmlRoot').setAttribute('lang', langCode);
+
+    const allLangElements = document.querySelectorAll('[data-lang]');
+    allLangElements.forEach(el => {
+      el.classList.remove('active');
+    });
+
+    const newActiveLangElements = document.querySelectorAll(`[data-lang="${langCode}"]`);
+    newActiveLangElements.forEach(el => {
+      el.classList.add('active');
+    });
+
+    const langItems = document.querySelectorAll('.dropdown-item[data-lang-code]');
+    langItems.forEach(item => {
+      item.classList.remove('lang-active');
+    });
+    document.querySelector(`.dropdown-item[data-lang-code="${langCode}"]`).classList.add('lang-active');
+
+    const flagSrc = {
+      'fr': 'https://flagcdn.com/fr.svg',
+      'ar': 'https://flagcdn.com/sa.svg',
+      'en': 'https://flagcdn.com/gb.svg'
+    };
+
+    document.getElementById('currentFlag').src = flagSrc[langCode];
+
+    if (langCode === 'ar') {
+      document.body.classList.add('rtl');
+    } else {
+      document.body.classList.remove('rtl');
+    }
+
+    localStorage.setItem('preferredLanguage', langCode);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const storedLang = localStorage.getItem('preferredLanguage');
+    if (storedLang) {
+      changeLanguage(storedLang);
+    }
+  });
+</script>
 </body>
 </html>

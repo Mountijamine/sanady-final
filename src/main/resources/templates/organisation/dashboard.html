@@ -1,236 +1,1298 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord - Organisation</title>
-    <link rel="stylesheet" th:href="@{/styles/dashboard.css}">
-    <!-- Adding Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+
+    <style>
+        /* ======= VARIABLES ET BASE ======= */
+        :root {
+            /* Palette de couleurs professionnelle */
+            --primary: #2E7D32;
+            --primary-light: #4CAF50;
+            --primary-lighter: #E8F5E9;
+            --primary-dark: #1B5E20;
+            
+            --neutral-50: #FAFAFA;
+            --neutral-100: #F5F5F5;
+            --neutral-200: #EEEEEE;
+            --neutral-300: #E0E0E0;
+            --neutral-400: #BDBDBD;
+            --neutral-500: #9E9E9E;
+            --neutral-600: #757575;
+            --neutral-700: #616161;
+            --neutral-800: #424242;
+            --neutral-900: #212121;
+            
+            --success: #2E7D32;
+            --info: #0277BD;
+            --warning: #FF8F00;
+            --danger: #C62828;
+
+            /* Interface */
+            --border-radius-sm: 4px;
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --border-radius-xl: 16px;
+            --border-radius-full: 9999px;
+            
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.03), 0 10px 10px rgba(0, 0, 0, 0.02);
+            
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-5: 1.25rem;
+            --spacing-6: 1.5rem;
+            --spacing-8: 2rem;
+            --spacing-10: 2.5rem;
+            --spacing-12: 3rem;
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ======= RESET & GLOBAL STYLES ======= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--neutral-100);
+            color: var(--neutral-800);
+            line-height: 1.5;
+        }
+
+        /* ======= TYPOGRAPHY ======= */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--neutral-900);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 1.75rem; }
+        h2 { font-size: 1.375rem; }
+        h3 { font-size: 1.25rem; }
+        h4 { font-size: 1.125rem; }
+        h5 { font-size: 1rem; }
+        h6 { font-size: 0.875rem; }
+
+        p, span, a, button, input, select, textarea {
+            font-size: 0.9375rem;
+        }
+
+        /* ======= LAYOUT SYSTEM ======= */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--spacing-6);
+            padding: var(--spacing-6);
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .full-width { grid-column: span 12; }
+        .two-thirds { grid-column: span 8; }
+        .one-third { grid-column: span 4; }
+        .half { grid-column: span 6; }
+
+        /* ======= NAVBAR STYLES ======= */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: var(--spacing-4) var(--spacing-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 64px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-4);
+        }
+
+        .logo-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--border-radius-full);
+            overflow: hidden;
+            background-color: var(--primary-lighter);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .org-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--neutral-900);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-5);
+        }
+
+        .id-info {
+            background-color: var(--primary-lighter);
+            padding: var(--spacing-2) var(--spacing-3);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.75rem;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .notification {
+            position: relative;
+        }
+
+        .notification-icon {
+            font-size: 1.125rem;
+            color: var(--neutral-600);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .notification-icon:hover {
+            color: var(--primary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: var(--border-radius-full);
+            width: 16px;
+            height: 16px;
+            font-size: 0.625rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--border-radius-full);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .admin-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ======= SUB NAVBAR STYLES ======= */
+        .sub-navbar {
+            display: flex;
+            background-color: white;
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 0 var(--spacing-6);
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+            height: 48px;
+        }
+
+        .sub-navbar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .sub-nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-3) var(--spacing-5);
+            color: var(--neutral-600);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            position: relative;
+            white-space: nowrap;
+            transition: color var(--transition-fast);
+        }
+
+        .sub-nav-item i {
+            margin-right: var(--spacing-2);
+            font-size: 0.875rem;
+        }
+
+        .sub-nav-item.active {
+            color: var(--primary);
+        }
+
+        .sub-nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary);
+            border-radius: var(--border-radius-full);
+        }
+
+        .sub-nav-item:hover {
+            color: var(--primary);
+        }
+
+        /* ======= DASHBOARD HEADER ======= */
+        .dashboard-header {
+            background: linear-gradient(rgba(27, 94, 32, 0.85), rgba(46, 125, 50, 0.8)), 
+                        url('https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=1200&auto=format&fit=crop&q=80') center/cover;
+            border-radius: var(--border-radius-lg);
+            margin: var(--spacing-6);
+            margin-bottom: var(--spacing-8);
+            overflow: hidden;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-overlay {
+            color: white;
+            padding: var(--spacing-8);
+            max-width: 700px;
+        }
+
+        .header-overlay h1 {
+            font-size: 1.75rem;
+            margin-bottom: var(--spacing-3);
+            color: white;
+            letter-spacing: -0.01em;
+        }
+
+        .header-overlay p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* ======= STATS CARDS ======= */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--spacing-6);
+            margin-bottom: var(--spacing-8);
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: var(--spacing-6);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-5);
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .stat-card:nth-child(1) .stat-icon { background-color: var(--primary); }
+        .stat-card:nth-child(2) .stat-icon { background-color: var(--info); }
+        .stat-card:nth-child(3) .stat-icon { background-color: var(--warning); }
+        .stat-card:nth-child(4) .stat-icon { background-color: var(--success); }
+
+        .stat-icon i {
+            font-size: 1.25rem;
+        }
+
+        .stat-info {
+            flex-grow: 1;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-1);
+            color: var(--neutral-900);
+        }
+
+        .stat-label {
+            color: var(--neutral-600);
+            font-size: 0.813rem;
+        }
+
+        /* ======= CARD COMPONENT ======= */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform var(--transition), box-shadow var(--transition);
+            margin-bottom: var(--spacing-6);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            padding: var(--spacing-5) var(--spacing-6);
+            border-bottom: 1px solid var(--neutral-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.063rem;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .card-body {
+            padding: var(--spacing-6);
+        }
+
+        /* ======= ACTIVITY LIST ======= */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            padding: var(--spacing-4) 0;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: var(--spacing-4);
+            flex-shrink: 0;
+        }
+
+        .activity-item:nth-child(1) .activity-icon { background-color: var(--primary); }
+        .activity-item:nth-child(2) .activity-icon { background-color: var(--info); }
+        .activity-item:nth-child(3) .activity-icon { background-color: var(--warning); }
+        .activity-item:nth-child(4) .activity-icon { background-color: var(--success); }
+
+        .activity-content {
+            flex-grow: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            color: var(--neutral-900);
+            margin-bottom: var(--spacing-1);
+        }
+
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            color: var(--neutral-500);
+            font-size: 0.813rem;
+        }
+
+        .activity-meta i {
+            margin-right: var(--spacing-1);
+        }
+
+        /* ======= ACTION CARDS ======= */
+        .action-card {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-4) 0;
+            border-bottom: 1px solid var(--neutral-200);
+            transition: background-color var(--transition);
+        }
+
+        .action-card:last-child {
+            border-bottom: none;
+        }
+
+        .action-card:hover {
+            background-color: var(--neutral-50);
+        }
+
+        .action-image {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-right: var(--spacing-4);
+            flex-shrink: 0;
+        }
+
+        .action-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .action-content {
+            flex-grow: 1;
+        }
+
+        .action-title {
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: var(--spacing-1);
+        }
+
+        .action-description {
+            color: var(--neutral-600);
+            font-size: 0.813rem;
+            margin-bottom: var(--spacing-3);
+        }
+
+        /* ======= PROGRESS BARS ======= */
+        .action-progress {
+            margin-top: var(--spacing-2);
+        }
+
+        .progress {
+            height: 6px;
+            background-color: var(--neutral-200);
+            border-radius: var(--border-radius-full);
+            overflow: hidden;
+            margin-bottom: var(--spacing-2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: var(--border-radius-full);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            color: var(--neutral-600);
+            font-size: 0.75rem;
+        }
+
+        /* ======= TABLE STYLES ======= */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            padding: var(--spacing-3) var(--spacing-4);
+            color: var(--neutral-600);
+            font-weight: 500;
+            text-align: left;
+            font-size: 0.813rem;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .data-table td {
+            padding: var(--spacing-4);
+            border-bottom: 1px solid var(--neutral-200);
+            vertical-align: middle;
+            font-size: 0.875rem;
+            color: var(--neutral-800);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--border-radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-badge.in-progress {
+            background-color: var(--primary-lighter);
+            color: var(--primary-dark);
+        }
+
+        .status-badge.completed {
+            background-color: rgba(2, 119, 189, 0.1);
+            color: var(--info);
+        }
+
+        /* ======= CREATE ACTION BUTTON ======= */
+        .create-action-btn {
+            position: fixed;
+            bottom: var(--spacing-6);
+            right: var(--spacing-6);
+            width: 54px;
+            height: 54px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--border-radius-full);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: transform var(--transition), background-color var(--transition);
+            z-index: 990;
+        }
+
+        .create-action-btn:hover {
+            transform: translateY(-2px);
+            background-color: var(--primary-dark);
+        }
+
+        /* ======= MODAL STYLES ======= */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: var(--spacing-4);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: var(--spacing-8) auto;
+            max-width: 600px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: var(--spacing-5) var(--spacing-6);
+            border-bottom: 1px solid var(--neutral-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.188rem;
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--neutral-500);
+            cursor: pointer;
+            padding: var(--spacing-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color var(--transition-fast);
+        }
+
+        .close-button:hover {
+            color: var(--neutral-900);
+        }
+
+        .modal-body {
+            padding: var(--spacing-6);
+        }
+
+        /* ======= FORM STYLES ======= */
+        .form-row {
+            margin-bottom: var(--spacing-5);
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-4);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-2);
+            font-weight: 500;
+            color: var(--neutral-800);
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--spacing-3);
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--neutral-500);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239e9e9e'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right var(--spacing-3) center;
+            background-size: 20px;
+            padding-right: var(--spacing-8);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: var(--spacing-8);
+        }
+
+        .action-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: var(--spacing-3) var(--spacing-6);
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color var(--transition-fast), transform var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button i {
+            margin-right: var(--spacing-2);
+        }
+
+        .action-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* ======= UPLOAD AREA ======= */
+        .upload-area {
+            border: 2px dashed var(--neutral-300);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-8);
+            text-align: center;
+            transition: all var(--transition);
+            background-color: var(--neutral-50);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(46, 125, 50, 0.03);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: var(--spacing-4);
+        }
+
+        .upload-area p {
+            color: var(--neutral-600);
+            margin-bottom: var(--spacing-3);
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: var(--spacing-2) var(--spacing-5);
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--border-radius-full);
+            font-weight: 500;
+            font-size: 0.813rem;
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .file-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-3);
+            margin-top: var(--spacing-4);
+        }
+
+        .file-preview-item {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .file-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-remove-btn {
+            position: absolute;
+            top: var(--spacing-1);
+            right: var(--spacing-1);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-full);
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .file-remove-btn:hover {
+            background-color: rgba(198, 40, 40, 0.8);
+        }
+
+        /* ======= EMPTY STATE ======= */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-8);
+            color: var(--neutral-500);
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-4);
+            color: var(--neutral-400);
+        }
+
+        .empty-state p {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        /* ======= RESPONSIVE ADJUSTMENTS ======= */
+        @media (max-width: 992px) {
+            .two-thirds, .one-third, .half {
+                grid-column: span 12;
+            }
+
+            .sub-navbar {
+                padding: 0 var(--spacing-4);
+            }
+
+            .navbar {
+                padding: var(--spacing-3) var(--spacing-4);
+            }
+
+            .dashboard-header {
+                margin: var(--spacing-4);
+                height: 180px;
+            }
+
+            .header-overlay {
+                padding: var(--spacing-5);
+            }
+
+            .header-overlay h1 {
+                font-size: 1.5rem;
+            }
+
+            .dashboard-layout {
+                padding: var(--spacing-4);
+                gap: var(--spacing-4);
+            }
+
+            .stats-row {
+                gap: var(--spacing-4);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .create-action-btn {
+                width: 48px;
+                height: 48px;
+                right: var(--spacing-4);
+                bottom: var(--spacing-4);
+            }
+
+            .modal-content {
+                margin: var(--spacing-4) auto;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-right {
+                gap: var(--spacing-3);
+            }
+            
+            .id-info {
+                display: none;
+            }
+
+            .header-overlay h1 {
+                font-size: 1.25rem;
+            }
+            
+            .header-overlay p {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
 </head>
+
 <body th:data-password-error="${passwordError}" th:data-profile-error="${profileError}">
-<!-- Main Navigation Bar -->
-<nav class="navbar">
-    <div class="navbar-left">
-        <div class="logo-circle">
-            <img th:if="${organisation.logo}" th:src="'data:image/png;base64,' + ${organisation.logo}" alt="Logo de l'organisation">
-            <img th:unless="${organisation.logo}" src="https://via.placeholder.com/40" alt="Logo par défaut">
-        </div>
-        <div class="org-name" th:text="${organisation.nom}">Nom de l'Organisation</div>
+    <!-- Ajout du fragment navbar principal -->
+    <th:block th:replace="~{Fragments/navbar :: orgNavbar(${organisation})}"></th:block>
+    
+    <!-- Ajout du fragment sous-navbar -->
+    <th:block th:replace="~{Fragments/navbar :: orgSubNavbar}"></th:block>
+<header class="dashboard-header">
+    <div class="header-overlay">
+        <h1>Bienvenue sur votre tableau de bord</h1>
+        <p>Gérez vos actions humanitaires et suivez votre impact</p>
     </div>
+</header>
 
-    <div class="navbar-right">
-        <span class="id-info" th:text="'ID: ' + ${organisation.numeroIdentif}">ID: 123456</span>
+<div class="dashboard-content">
+    <section id="section1">
+        <h1 class="section-title">Tableau de bord</h1>
 
-        <!-- Notification Bell -->
-        <div class="notification">
-            <a href="#" class="notification-icon">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </a>
-        </div>
+        <!-- Stats Cards -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number" th:text="${actionsEnCours}">26</div>
+                    <div class="stat-label">Actions en cours</div>
+                </div>
+            </div>
 
-        <div class="dropdown">
-            <a href="#" class="param-icon" id="dropdownToggle"><i class="fas fa-cog"></i></a>
-            <div class="dropdown-content">
-                <a href="#" class="dropdown-item" id="showProfileModal"><i class="fas fa-user-edit"></i> Modifier profil</a>
-                <a href="#" class="dropdown-item"><i class="fas fa-language"></i> Langue</a>
-                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-header">
+                        <div class="stat-number" th:text="${totalBeneficiaires}">1,204</div>
+                    </div>
+                    <div class="stat-label">Bénéficiaires</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number" th:text="${#numbers.formatDecimal(montantTotal, 0, 'COMMA', 2, 'POINT')} + ' €'">15,650 €</div>
+                    <div class="stat-label">Montant collecté</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number" th:text="${actionsTerminees}">42</div>
+                    <div class="stat-label">Actions complétées</div>
+                </div>
             </div>
         </div>
-    </div>
-</nav>
 
-<!-- Sub Navigation with Rectangles -->
-<div class="sub-navbar">
-    <a href="#section1" class="sub-nav-item">
-        <i class="fas fa-chart-line"></i>
-        <span>Tableau de bord</span>
-    </a>
-    <a href="#section2" class="sub-nav-item">
-        <i class="fas fa-tasks"></i>
-        <span>Lancer des Actions</span>
-    </a>
-    <a href="#section3" class="sub-nav-item">
-        <i class="fas fa-users"></i>
-        <span>Actions Archivees</span>
-    </a>
+        <!-- Latest Activities and Actions -->
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Activités récentes</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="activity-list">
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Nouvelle action créée</div>
+                                <div class="activity-meta">
+                                    <span class="activity-time"><i class="far fa-clock"></i> Il y a 2 heures</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-donate"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Don reçu: 250€</div>
+                                <div class="activity-meta">
+                                    <span class="activity-time"><i class="far fa-clock"></i> Hier</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Profil mis à jour</div>
+                                <div class="activity-meta">
+                                    <span class="activity-time"><i class="far fa-clock"></i> Il y a 3 jours</span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Action terminée: Distribution alimentaire</div>
+                                <div class="activity-meta">
+                                    <span class="activity-time"><i class="far fa-clock"></i> Il y a 5 jours</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Actions en vedette</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Remplacez les action-cards existants par ceux-ci -->
+                    <div class="action-card">
+                        <div class="action-image">
+                            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500&auto=format&fit=crop&q=80" alt="Distribution de nourriture">
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Distribution de nourriture</div>
+                            <div class="action-description">Quartier: Centre-ville - 120 bénéficiaires</div>
+                        </div>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-image">
+                            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500&auto=format&fit=crop&q=80" alt="Soutien scolaire">
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Soutien scolaire</div>
+                            <div class="action-description">École primaire - 45 enfants</div>
+                        </div>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-image">
+                            <img src="https://images.unsplash.com/photo-1584634428668-72e33c4f3ac3?w=500&auto=format&fit=crop&q=80" alt="Assistance médicale">
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Assistance médicale</div>
+                            <div class="action-description">Région Nord - 80 familles</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Évolution des actions</h2>
+                    <div class="card-actions">
+                        <select class="period-select">
+                            <option value="week">Semaine</option>
+                            <option value="month" selected>Mois</option>
+                            <option value="year">Année</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="actionsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Actions récentes</h2>
+                    <div class="card-actions">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Rechercher...">
+                        </div>
+                        <button class="filter-btn">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Type</th>
+                            <th>Bénéficiaires</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Distribution alimentaire</td>
+                            <td>Aide alimentaire</td>
+                            <td>120</td>
+                            <td><span class="status-badge in-progress">En cours</span></td>
+                            <td>
+                                <button class="icon-btn"><i class="fas fa-eye"></i></button>
+                                <button class="icon-btn"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>
+                        <!-- Autres lignes -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Calendrier</h2>
+                    <div class="card-actions">
+                        <button class="icon-btn"><i class="fas fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="calendar-month">
+                        <div class="calendar-header">
+                            <h3>Mai 2025</h3>
+                            <div class="calendar-nav">
+                                <button class="icon-btn"><i class="fas fa-chevron-left"></i></button>
+                                <button class="icon-btn"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <!-- Mini calendrier avec jours et événements marqués -->
+                    </div>
+                    <div class="upcoming-events">
+                        <h4>Événements à venir</h4>
+                        <div class="event-item">
+                            <div class="event-date">
+                                <div class="event-day">15</div>
+                                <div class="event-month">Mai</div>
+                            </div>
+                            <div class="event-content">
+                                <div class="event-title">Distribution alimentaire</div>
+                                <div class="event-meta">10:00 - 14:00 • Centre-ville</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mes Actions Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Mes Actions</h2>
+            </div>
+            <div class="card-body">
+                <div th:if="${actions != null && !actions.empty}">
+                    <div th:each="action : ${actions}" class="action-card">
+                        <div class="action-image">
+                            <!-- Utiliser la première image si disponible, sinon image par défaut -->
+                            <img th:if="${action.mediaUrls != null && !action.mediaUrls.empty}" th:src="${action.mediaUrls[0]}" alt="Image de l'action">
+                            <img th:unless="${action.mediaUrls != null && !action.mediaUrls.empty}" src="https://via.placeholder.com/80" alt="Image par défaut">
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title" th:text="${action.titre}">Titre de l'action</div>
+                            <div class="action-description">
+                                <span th:text="${action.lieu}">Lieu</span> - 
+                                <span th:text="${#dates.format(action.dateAction, 'dd/MM/yyyy')}">Date</span>
+                            </div>
+                            <div class="action-progress">
+                                <div class="progress">
+                                    <div class="progress-bar" 
+                                        th:style="'width:' + ${action.montantActuel / (action.objectifCollecte > 0 ? action.objectifCollecte : 1) * 100} + '%'" 
+                                        style="width: 45%"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span th:text="${#numbers.formatDecimal(action.montantActuel, 0, 'COMMA', 2, 'POINT')} + ' €'">450 €</span> / 
+                                    <span th:text="${#numbers.formatDecimal(action.objectifCollecte, 0, 'COMMA', 2, 'POINT')} + ' €'">1000 €</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${actions == null || actions.empty}" class="empty-state">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Vous n'avez pas encore créé d'actions. Utilisez le bouton + pour lancer votre première action.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
-<!-- Profile Modal -->
-<div id="profileModal" class="modal">
+<!-- Floating Create Action Button -->
+<div class="create-action-btn">
+    <i class="fas fa-plus"></i>
+</div>
+
+<!-- Modal pour créer une nouvelle action -->
+<div class="modal" id="createActionModal">
     <div class="modal-content">
-        <span class="close">&times;</span>
-
-        <!-- Profile View -->
-        <div id="profileView">
-            <div class="profile-header">
-                <h2>Profil de l'Organisation</h2>
-                <div class="profile-actions">
-                    <button id="modifyBtn" class="action-btn"><i class="fas fa-edit"></i> Modifier</button>
-                    <button id="passwordBtn" class="action-btn"><i class="fas fa-key"></i> Modifier mot de passe</button>
-                </div>
-            </div>
-
-            <div class="profile-body">
-                <div class="profile-logo">
-                    <img th:if="${organisation.logo}" th:src="'data:image/png;base64,' + ${organisation.logo}" alt="Logo de l'organisation">
-                    <img th:unless="${organisation.logo}" src="https://via.placeholder.com/200" alt="Logo par défaut">
-                </div>
-
-                <div class="profile-details">
-                    <div class="detail-item">
-                        <span class="label">Nom:</span>
-                        <span class="value" th:text="${organisation.nom}">Nom de l'Organisation</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Numéro d'identification:</span>
-                        <span class="value" th:text="${organisation.numeroIdentif}">123456</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Adresse légale:</span>
-                        <span class="value" th:text="${organisation.adresseLegale}">Adresse de l'organisation</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Description:</span>
-                        <span class="value description" th:text="${organisation.description}">Description de l'organisation...</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Contact Principal:</span>
-                        <span class="value " th:text="${organisation.contactPrincipal}">Contact Principal</span>
-                    </div>
-                </div>
-            </div>
+        <div class="modal-header">
+            <h3 class="modal-title">Lancer une nouvelle action</h3>
+            <button type="button" class="close-button" id="closeActionModal">&times;</button>
         </div>
+        <div class="modal-body">
+            <form id="createActionForm" th:action="@{/organisation/createAction}" method="post" enctype="multipart/form-data">
+                <!-- Ajout d'un token CSRF explicite -->
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" th:if="${_csrf}" />
 
-        <!-- Edit Profile Form -->
-        <div id="editProfileForm" style="display: none;">
-            <div class="profile-header">
-                <h2>Modifier le Profil</h2>
-            </div>
-
-            <!-- Error message display -->
-            <div th:if="${profileErrorMessage}" class="alert alert-danger" role="alert"
-                 th:text="${profileErrorMessage}" style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: 0.75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: 0.25rem;">
-            </div>
-
-            <form id="orgProfileForm" th:action="@{/organisation/update-profile}" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="orgName">Nom de l'Organisation</label>
-                    <input type="text" id="orgName" name="nom" th:value="${organisation.nom}" required
-                           th:class="${profileError == 'name-invalid'} ? 'is-invalid' : ''"
-                           style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ced4da;">
-                    <div th:if="${profileError == 'name-invalid'}"
-                         style="color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
-                        Le nom de l'organisation est obligatoire.
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="titre">Titre de l'action *</label>
+                        <input type="text" id="titre" name="titre" class="form-control" required>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="orgId">Numéro d'identification</label>
-                    <input type="text" id="orgId" name="numeroIdentif" th:value="${organisation.numeroIdentif}" required
-                           th:class="${profileError == 'id-empty' || profileError == 'id-exists'} ? 'is-invalid' : ''"
-                           style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ced4da;">
-                    <div th:if="${profileError == 'id-empty'}"
-                         style="color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
-                        Le numéro d'identification est obligatoire.
-                    </div>
-                    <div th:if="${profileError == 'id-exists'}"
-                         style="color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
-                        Ce numéro d'identification est déjà utilisé.
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="orgAddress">Adresse légale</label>
-                    <input type="text" id="orgAddress" name="adresseLegale" th:value="${organisation.adresseLegale}" required
-                           th:class="${profileError == 'address-invalid'} ? 'is-invalid' : ''"
-                           style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ced4da;">
-                    <div th:if="${profileError == 'address-invalid'}"
-                         style="color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
-                        L'adresse légale est obligatoire.
+                <div class="form-row two-columns">
+                    <div class="form-group">
+                        <label for="date">Date de l'action *</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lieu">Lieu *</label>
+                        <input type="text" id="lieu" name="lieu" class="form-control" required>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="orgDescription">Description</label>
-                    <textarea id="orgDescription" name="description" rows="4" th:text="${organisation.description}" required
-                              th:class="${profileError == 'description-invalid'} ? 'is-invalid' : ''"
-                              style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ced4da;"></textarea>
-                    <div th:if="${profileError == 'description-invalid'}"
-                         style="color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
-                        La description est obligatoire.
+                <div class="form-row two-columns">
+                    <div class="form-group">
+                        <label for="objectifCollecte">Objectif de collecte (€) *</label>
+                        <input type="number" id="objectifCollecte" name="objectifCollecte" class="form-control" min="0" step="0.01" value="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombreParticipants">Nombre de participants</label>
+                        <input type="number" id="nombreParticipants" name="nombreParticipants" class="form-control" min="0" value="0">
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="contactPrincipal">Contact Principal</label>
-                    <input type="text" id="contactPrincipal" name="contactprincipal" th:value="${organisation.contactPrincipal}" required
-                           th:class="${profileError == 'contact-invalid'} ? 'is-invalid' : ''"
-                           style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ced4da;">
-                    <div th:if="${profileError == 'contact-invalid'}"
-                         style="color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
-                        Le contact principal est obligatoire.
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="categorieId">Catégorie *</label>
+                        <select id="categorieId" name="categorieId" class="form-control" required>
+                            <option value="">-- Sélectionnez une catégorie --</option>
+                            <option value="aide_alimentaire">Aide alimentaire</option>
+                            <option value="education">Éducation</option>
+                            <option value="sante">Santé</option>
+                            <option value="urgence">Aide d'urgence</option>
+                            <option value="environnement">Environnement</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="orgLogo">Logo</label>
-                    <div class="logo-upload">
-                        <div class="current-logo" style="width: 200px; height: 200px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 10px; display: flex; align-items: center; justify-content: center;">
-                            <img th:if="${organisation.logo}" th:src="'data:image/png;base64,' + ${organisation.logo}" alt="Logo actuel" style="width: 100%; height: 100%; object-fit: contain;">
-                            <img th:unless="${organisation.logo}" src="https://via.placeholder.com/200" alt="Logo par défaut" style="width: 100%; height: 100%; object-fit: contain;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mediaFiles">Images de l'action</label>
+                        <div class="upload-area">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <p>Glissez-déposez des images ici ou</p>
+                            <label for="mediaFiles" class="upload-btn">Parcourir</label>
+                            <input type="file" id="mediaFiles" name="mediaFiles" multiple accept="image/*" style="display: none;">
+                            <div class="file-preview" id="filePreview"></div>
                         </div>
-                        <input type="file" id="orgLogo" name="logoFile" accept="image/*"
-                               th:class="${profileError == 'logo-invalid'} ? 'is-invalid' : ''">
-                        <div th:if="${profileError == 'logo-invalid'}"
-                             style="color: #dc3545; font-size: 0.875em; margin-top: 0.25rem;">
-                            Le format ou la taille du logo est invalide.
-                        </div>
-                        <p class="file-hint" style="color: #666; font-size: 0.85em; margin-top: 5px;">Formats acceptés: JPG, PNG. Taille max: 2MB</p>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Enregistrer</button>
-                    <button type="button" id="cancelEditBtn" class="cancel-btn"><i class="fas fa-times"></i> Annuler</button>
-                </div>
-            </form>
-        </div>
-        <!-- Password Form -->
-        <div id="passwordForm" style="display: none;">
-            <div class="profile-header">
-                <h2>Modifier le Mot de Passe</h2>
-            </div>
-            <div th:if="${errorMessage}" class="alert alert-danger" role="alert"
-                 th:text="${errorMessage}">
-            </div>
-            <form id="changePasswordForm" th:action="@{/organisation/change-password}" method="post">
-                <div class="form-group">
-                    <label for="currentPassword">Mot de passe actuel</label>
-                    <input type="password" id="currentPassword" name="currentPassword" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="newPassword">Nouveau mot de passe</label>
-                    <input type="password" id="newPassword" name="newPassword" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirmer le mot de passe</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="submit-btn"><i class="fas fa-key"></i> Modifier mot de passe</button>
-                    <button type="button" id="cancelPasswordBtn" class="cancel-btn"><i class="fas fa-times"></i> Annuler</button>
+                    <button type="submit" class="action-button">
+                        <i class="fas fa-paper-plane"></i> Lancer l'action
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<script th:src="@{/js/dashboard.js}"></script>
+<!-- Utilisation du fragment de footer -->
+<th:block th:replace="~{Fragments/navbar :: footer}"></th:block>
+
+<!-- Utilisation du fragment des scripts de dashboard -->
+<th:block th:replace="~{Fragments/navbar :: dashboardScripts}"></th:block>
 </body>
 </html>

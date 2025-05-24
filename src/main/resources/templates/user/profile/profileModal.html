@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="profileModal" id="profileModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+
+    <!-- Profile View -->
+    <div id="profileView">
+      <div class="profile-header">
+        <h2>Profil Utilisateur</h2>
+        <div class="profile-actions">
+          <button id="modifyBtn" class="action-btn"><i class="fas fa-edit"></i> Modifier</button>
+          <button id="passwordBtn" class="action-btn"><i class="fas fa-key"></i> Modifier mot de passe</button>
+        </div>
+      </div>
+
+      <div class="profile-body">
+        <div class="profile-logo">
+          <img th:if="${user.logoPath != null}" th:src="'data:image/png;base64,' + ${user.logoPath}" alt="Photo de profil">
+          <img th:unless="${user.logoPath != null}" src="https://via.placeholder.com/200" alt="Photo par défaut">
+        </div>
+
+        <div class="profile-details">
+          <div class="detail-item">
+            <span class="label">Nom:</span>
+            <span class="value" th:text="${user.nom}">Nom de l'Utilisateur</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Email:</span>
+            <span class="value" th:text="${user.email}">email@example.com</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Téléphone:</span>
+            <span class="value" th:text="${user.telephone}">0123456789</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Localisation:</span>
+            <span class="value" th:text="${user.localisation}">Localisation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include the edit profile form fragment -->
+    <div th:replace="~{user/profile/editProfileForm :: editProfileForm}"></div>
+
+    <!-- Include the password change form fragment -->
+    <div th:replace="~{user/profile/passwordForm :: passwordForm}"></div>
+  </div>
+</div>
+</body>
+</html>

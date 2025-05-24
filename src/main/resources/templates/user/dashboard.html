@@ -1,26 +1,1981 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" dir="ltr" id="htmlRoot">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>SANADY - Plateforme de Dons</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Restauration du thème vert original */
+      --primary: #4CAF50;
+      --primary-dark: #2E7D32;
+      --primary-light: #A5D6A7;
+      --primary-gradient: linear-gradient(135deg, #4CAF50, #2E7D32);
+      --secondary: #FF9800;
+      --secondary-dark: #F57C00;
+      --text-dark: #263238;
+      --text-medium: #546E7A;
+      --text-light: #B0BEC5;
+      --bg-light: #F5F8FA;
+      --white: #FFFFFF;
+      --gray-100: #F8F9FA;
+      --gray-200: #E9ECEF;
+      --gray-300: #DEE2E6;
+      --gray-600: #6C757D;
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
+      --shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+      --border-radius-sm: 8px;
+      --border-radius: 12px;
+      --border-radius-lg: 20px;
+      --transition: all 0.3s ease;
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--white);
+      background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop');
+      background-size: cover;
+      background-attachment: fixed;
+      position: relative;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* Ajouter un overlay pour assurer la lisibilité du contenu */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: -1;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+
+    /* Modern Navbar */
+    .modern-navbar {
+      background-color: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+      padding: 1rem 0;
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .navbar-logo {
+      height: 45px;
+      width: auto;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .navbar-menu .menu-item {
+      position: relative;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-medium);
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .navbar-menu .menu-item:hover {
+      color: var(--primary);
+    }
+
+    .navbar-menu .menu-item.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .navbar-menu .menu-item.active::after {
+      content: '';
+      position: absolute;
+      left: 0.75rem;
+      right: 0.75rem;
+      bottom: 0;
+      height: 2px;
+      background-color: var(--primary);
+      border-radius: 2px;
+    }
+
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 30px;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: var(--white);
+      box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .icon-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--gray-100);
+      color: var(--text-medium);
+      transition: var(--transition);
+    }
+
+    .icon-button:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .mobile-menu-trigger {
+      display: none;
+      font-size: 1.5rem;
+      color: var(--text-dark);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      height: 500px;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                  url('https://images.unsplash.com/photo-1636995036295-d8c65d88b8ab?q=80&w=1920') center/cover no-repeat;
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    .hero-content {
+      max-width: 600px;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-md);
+      color: var(--white);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: var(--spacing-md);
+      opacity: 0.9;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .hero-stats {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 1.5rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .stat-info p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* Featured Categories */
+    .categories-section {
+      padding: var(--spacing-xl) 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .section-pretitle {
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--primary);
+      margin-bottom: var(--spacing-xs);
+      letter-spacing: 1px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .section-subtitle {
+      color: var(--text-medium);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .category-card {
+      position: relative;
+      height: 180px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .category-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .category-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .category-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--spacing-sm);
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      color: white;
+    }
+
+    .category-title {
+      font-size: 1.2rem;
+      margin-bottom: 3px;
+      color: white;
+    }
+
+    .category-count {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    /* Campaigns Section */
+    .campaigns-section {
+      padding: var(--spacing-xl) 0;
+      background-color: white;
+    }
+
+    .campaigns-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .campaigns-title {
+      position: relative;
+      font-size: 1.8rem;
+      padding-left: var(--spacing-md);
+    }
+
+    .campaigns-title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background-color: var(--primary);
+      border-radius: 3px;
+    }
+
+    .campaigns-filters {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+
+    .filter-button {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 500;
+      color: var(--text-medium);
+      background-color: var(--gray-100);
+      transition: var(--transition);
+    }
+
+    .filter-button.active,
+    .filter-button:hover {
+      color: white;
+      background-color: var(--primary);
+    }
+
+    .campaigns-carousel {
+      position: relative;
+      margin: var(--spacing-md) 0;
+    }
+
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      z-index: 10;
+      transition: var(--transition);
+    }
+
+    .carousel-nav:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .prev-btn {
+      left: -24px;
+    }
+
+    .next-btn {
+      right: -24px;
+    }
+
+    .campaign-slider {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 350px;
+      gap: var(--spacing-md);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding: var(--spacing-sm);
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      scroll-behavior: smooth;
+      padding: var(--spacing-sm) var(--spacing-xs);
+    }
+
+    .campaign-slider::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+
+    .campaign-card {
+      scroll-snap-align: start;
+      background-color: white;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .campaign-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .campaign-image {
+      height: 180px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .campaign-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .campaign-card:hover .campaign-image img {
+      transform: scale(1.05);
+    }
+
+    .campaign-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: var(--primary);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+
+    .campaign-content {
+      padding: var(--spacing-md);
+    }
+
+    .campaign-title {
+      font-size: 1.1rem;
+      margin-bottom: var(--spacing-sm);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 50px;
+    }
+
+    .organization {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .org-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .org-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-medium);
+    }
+
+    .progress-container {
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background-color: var(--gray-200);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--primary-gradient);
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+      animation: shimmer 2s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-medium);
+    }
+
+    .campaign-stats {
+      display: flex;
+      justify-content: space-between;
+      padding-top: var(--spacing-sm);
+      border-top: 1px solid var(--gray-200);
+      margin-top: var(--spacing-sm);
+    }
+
+    .stat-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-medium);
+    }
+
+    .campaign-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--spacing-md);
+    }
+
+    .support-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transition);
+    }
+
+    .support-btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .details-link {
+      color: var(--text-medium);
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transition);
+    }
+
+    .details-link:hover {
+      color: var(--primary);
+      transform: translateX(3px);
+    }
+
+    /* Impact Section */
+    .impact-section {
+      padding: var(--spacing-xl) 0;
+      background: linear-gradient(rgba(46, 125, 50, 0.95), rgba(46, 125, 50, 0.95)), 
+                 url('https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=1920') center/cover fixed;
+      color: white;
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+
+    .impact-item {
+      text-align: center;
+      padding: var(--spacing-md);
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: var(--transition);
+    }
+
+    .impact-item:hover {
+      transform: translateY(-10px);
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .impact-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-sm);
+      height: 80px;
+      width: 80px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .impact-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .impact-title {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* How it works */
+    .how-it-works {
+      padding: var(--spacing-xl) 0;
+    }
+
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+
+    .step-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: var(--spacing-lg);
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .step-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 1.5rem;
+      font-weight: 700;
+      border-radius: 50%;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .step-title {
+      font-size: 1.3rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .step-description {
+      color: var(--text-medium);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Featured Cause */
+    .featured-cause {
+      padding: var(--spacing-xl) 0;
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                 url('https://images.unsplash.com/photo-1607153333879-c174d265f1d2?auto=format&fit=crop&w=1500&q=80') center/cover fixed;
+      color: white;
+      text-align: center;
+    }
+
+    .featured-content {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .featured-title {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-md);
+      color: white;
+    }
+
+    .featured-description {
+      font-size: 1.1rem;
+      margin-bottom: var(--spacing-lg);
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .featured-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: center;
+    }
+
+    .btn-white {
+      background-color: white;
+      color: var(--primary-dark);
+      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-white:hover {
+      background-color: #f1f1f1;
+      box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-transparent {
+      border: 2px solid white;
+      color: white;
+      background-color: transparent;
+    }
+
+    .btn-transparent:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Testimonials */
+    .testimonials-section {
+      padding: var(--spacing-xl) 0;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+
+    .testimonial-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: var(--spacing-lg);
+      position: relative;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: var(--spacing-md);
+      color: var(--text-medium);
+      line-height: 1.7;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .author-info h4 {
+      font-weight: 600;
+    }
+
+    .author-role {
+      font-size: 0.85rem;
+      color: var(--text-medium);
+    }
+
+    .testimonial-quote {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: var(--primary-light);
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+
+    /* Partners */
+    .partners-section {
+      padding: var(--spacing-xl) 0;
+      background-color: white;
+    }
+
+    .partners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+      align-items: center;
+    }
+
+    .partner-logo {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: grayscale(100%);
+      opacity: 0.6;
+      transition: var(--transition);
+    }
+
+    .partner-logo:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+
+    .partner-logo img {
+      max-height: 60px;
+      max-width: 120px;
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--text-dark);
+      color: white;
+      padding-top: var(--spacing-xl);
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+      padding-bottom: var(--spacing-lg);
+    }
+
+    .footer-column h3 {
+      color: white;
+      font-size: 1.2rem;
+      margin-bottom: var(--spacing-md);
+      position: relative;
+      padding-bottom: var(--spacing-xs);
+    }
+
+    .footer-column h3:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 40px;
+      height: 3px;
+      background-color: var(--primary);
+    }
+
+    .footer-about p {
+      margin-bottom: var(--spacing-md);
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+
+    .social-links {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .social-icon:hover {
+      background-color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .footer-links a {
+      color: var(--text-light);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      transform: translateX(5px);
+    }
+
+    .footer-links a i {
+      color: var(--primary);
+    }
+
+    .footer-contact li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-light);
+    }
+
+    .footer-contact i {
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .newsletter-form {
+      display: flex;
+      margin-top: var(--spacing-sm);
+    }
+
+    .newsletter-input {
+      flex-grow: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 30px 0 0 30px;
+      outline: none;
+    }
+
+    .newsletter-button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0 1.2rem;
+      border-radius: 0 30px 30px 0;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .newsletter-button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .footer-bottom {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: var(--spacing-md) 0;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    /* Back to Top */
+    .back-to-top {
+      position: fixed;
+      right: 30px;
+      bottom: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+      transition: var(--transition);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-5px);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1200px) {
+      .hero-stats {
+        display: none;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .navbar-menu {
+        display: none;
+      }
+
+      .mobile-menu-trigger {
+        display: block;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .campaign-slider {
+        grid-auto-columns: 300px;
+      }
+
+      .carousel-nav {
+        display: none;
+      }
+
+      .featured-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-content {
+        text-align: center;
+        padding: 0 var(--spacing-md);
+      }
+
+      .hero-buttons {
+        justify-content: center;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+      }
+
+      .impact-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+
+      .steps-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .navbar-actions {
+        display: none;
+      }
+
+      .hero-section {
+        height: 400px;
+      }
+
+      .campaigns-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+      }
+
+      .campaigns-filters {
+        overflow-x: auto;
+        padding-bottom: 10px;
+        width: 100%;
+      }
+
+      .filter-button {
+        white-space: nowrap;
+      }
+
+      .impact-number {
+        font-size: 2rem;
+      }
+
+      .campaign-slider {
+        grid-auto-columns: 280px;
+      }
+    }
+
+    /* Custom Languages Menu */
+    .languages-menu {
+      position: relative;
+    }
+
+    .current-language {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: var(--text-medium);
+      font-weight: 500;
+    }
+
+    .languages-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: var(--spacing-xs);
+      min-width: 150px;
+      z-index: 100;
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: var(--transition);
+    }
+
+    .languages-menu:hover .languages-dropdown {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(5px);
+    }
+
+    .language-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.5rem var(--spacing-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .language-option:hover {
+      background-color: var(--gray-100);
+    }
+
+    .language-flag {
+      width: 20px;
+      height: auto;
+    }
+    
+    /* Mobile Menu */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 280px;
+      height: 100%;
+      background-color: white;
+      z-index: 2000;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition);
+      padding: var(--spacing-lg) var(--spacing-md);
+      overflow-y: auto;
+    }
+    
+    .mobile-menu.active {
+      right: 0;
+    }
+    
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .close-menu {
+      font-size: 1.5rem;
+      color: var(--text-dark);
+      background: none;
+      border: none;
+    }
+    
+    .mobile-nav {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .mobile-nav ul {
+      list-style: none;
+    }
+    
+    .mobile-nav li {
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .mobile-nav a {
+      display: block;
+      padding: var(--spacing-xs) 0;
+      color: var(--text-dark);
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .mobile-nav a:hover, 
+    .mobile-nav a.active {
+      color: var(--primary);
+    }
+    
+    .mobile-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1999;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+  </style>
 </head>
 <body>
 
-<span th:if="${user != null}" th:text="${user.nom}">Name</span>
+<!-- Modern Navbar -->
+<nav class="modern-navbar">
+  <div class="container navbar-container">
+    <div class="navbar-brand">
+      <a href="/">
+        <img src="image/Sanadyimage.jpeg" alt="Sanady" class="navbar-logo">
+      </a>
+      
+      <div class="navbar-menu">
+        <a href="/" class="menu-item active">Accueil</a>
+        <a href="/campaigns" class="menu-item">Campagnes</a>
+        <a href="/about" class="menu-item">À propos</a>
+        <a href="/contact" class="menu-item">Contact</a>
+        <a href="/blog" class="menu-item">Blog</a>
+      </div>
+    </div>
+    
+    <div class="navbar-actions">
+      <button class="icon-button">
+        <i class="fas fa-search"></i>
+      </button>
+      
+      <div class="languages-menu">
+        <div class="current-language">
+          <img src="https://flagcdn.com/fr.svg" alt="Français" class="language-flag" id="currentFlag">
+          <span>FR</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="languages-dropdown">
+          <div class="language-option" data-lang-code="fr">
+            <img src="https://flagcdn.com/fr.svg" alt="Français" class="language-flag">
+            <span>Français</span>
+          </div>
+          <div class="language-option" data-lang-code="en">
+            <img src="https://flagcdn.com/gb.svg" alt="English" class="language-flag">
+            <span>English</span>
+          </div>
+          <div class="language-option" data-lang-code="ar">
+            <img src="https://flagcdn.com/sa.svg" alt="Arabic" class="language-flag">
+            <span>العربية</span>
+          </div>
+        </div>
+      </div>
+      
+      <a href="/auth/login" class="action-button btn-outline">Connexion</a>
+      <a href="/auth/register/organisation" class="action-button btn-primary">Créer votre site</a>
+    </div>
+    
+    <button class="mobile-menu-trigger">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+</nav>
 
+<!-- Mobile Menu -->
+<div class="overlay" id="overlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="menu-header">
+    <img src="image/Sanadyimage.jpeg" alt="Sanady" style="height: 35px;">
+    <button class="close-menu" id="closeMenu">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  
+  <nav class="mobile-nav">
+    <ul>
+      <li><a href="/" class="active">Accueil</a></li>
+      <li><a href="/campaigns">Campagnes</a></li>
+      <li><a href="/about">À propos</a></li>
+      <li><a href="/contact">Contact</a></li>
+      <li><a href="/blog">Blog</a></li>
+    </ul>
+  </nav>
+  
+  <div class="mobile-actions">
+    <a href="/auth/login" class="action-button btn-outline">Connexion</a>
+    <a href="/auth/register/organisation" class="action-button btn-primary">Créer votre site</a>
+  </div>
+</div>
 
-<p>Email: <span th:text="${user.email}">Email</span></p>
-<p>Phone: <span th:text="${user.telephone}">Phone</span></p>
-<p>Location: <span th:text="${user.localisation}">Location</span></p>
-<img th:if="${user.logoPath != null}"
-     th:src="'data:image/png;base64,' + ${user.logoPath}"
-     alt="User Logo" width="150"/>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Ensemble, créons un impact durable</h1>
+      <p class="hero-subtitle">Rejoignez la communauté Sanady et contribuez à transformer des vies à travers le monde avec des actions concrètes.</p>
+      <div class="hero-buttons">
+        <a href="#campaigns" class="action-button btn-primary">Explorer les campagnes</a>
+        <a href="/auth/register/user" class="action-button btn-transparent">Rejoindre la communauté</a>
+      </div>
+    </div>
+    
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <h3>125,000+</h3>
+          <p>Vies impactées</p>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-hand-holding-heart"></i>
+        </div>
+        <div class="stat-info">
+          <h3>1,200+</h3>
+          <p>Projets réussis</p>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="fas fa-globe-africa"></i>
+        </div>
+        <div class="stat-info">
+          <h3>85+</h3>
+          <p>Pays aidés</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- Categories Section -->
+<section class="categories-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-pretitle">DOMAINES D'INTERVENTION</div>
+      <h2 class="section-title">Nos catégories d'aide</h2>
+      <p class="section-subtitle">Découvrez les différents domaines dans lesquels Sanady et ses partenaires interviennent pour créer un impact positif.</p>
+    </div>
+    
+    <div class="categories-grid">
+      <div class="category-card">
+        <img src="https://images.unsplash.com/photo-1518949142393-f1d68174c92a?q=80&w=600" alt="Aide alimentaire">
+        <div class="category-overlay">
+          <h3 class="category-title">Aide alimentaire</h3>
+          <p class="category-count">24 campagnes</p>
+        </div>
+      </div>
+      
+      <div class="category-card">
+        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600" alt="Éducation">
+        <div class="category-overlay">
+          <h3 class="category-title">Éducation</h3>
+          <p class="category-count">18 campagnes</p>
+        </div>
+      </div>
+      
+      <div class="category-card">
+        <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=600" alt="Santé">
+        <div class="category-overlay">
+          <h3 class="category-title">Santé</h3>
+          <p class="category-count">32 campagnes</p>
+        </div>
+      </div>
+      
+      <div class="category-card">
+        <img src="https://images.unsplash.com/photo-1594398901394-4e34939a4fd0?q=80&w=600" alt="Eau potable">
+        <div class="category-overlay">
+          <h3 class="category-title">Eau potable</h3>
+          <p class="category-count">16 campagnes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<form action="/logout" method="POST">
-  <button type="submit">Logout</button>
-</form>
+<!-- Campaigns Section -->
+<section class="campaigns-section" id="campaigns">
+  <div class="container">
+    <div class="campaigns-header">
+      <h2 class="campaigns-title">Campagnes en cours</h2>
+      
+      <div class="campaigns-filters">
+        <button class="filter-button active">Toutes</button>
+        <button class="filter-button">Urgence</button>
+        <button class="filter-button">Populaires</button>
+        <button class="filter-button">Récentes</button>
+        <button class="filter-button">Se termine bientôt</button>
+      </div>
+    </div>
+    
+    <div class="campaigns-carousel">
+      <button class="carousel-nav prev-btn">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      
+      <div class="campaign-slider">
+        <!-- Campaign Card 1 - Palestine Humanitarian Aid -->
+        <div class="campaign-card">
+          <div class="campaign-image">
+            <img src="https://images.unsplash.com/photo-1607153333879-c174d265f1d2?w=800&auto=format&fit=crop" alt="Honouring The People Of Honour">
+            <div class="campaign-badge">Urgent</div>
+          </div>
+          <div class="campaign-content">
+            <h3 class="campaign-title">Honouring The People Of Honour</h3>
+            <div class="organization">
+              <img src="https://i.imgur.com/QKMY7Y5.png" alt="قوافل الخير" class="org-logo">
+              <span class="org-name">قوافل الخير</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 101%"></div>
+              </div>
+              <div class="progress-text">101%</div>
+            </div>
+            <div class="campaign-stats">
+              <div class="collected">
+                <div class="amount">1008197.24 USD</div>
+                <div class="label">Collected</div>
+              </div>
+              <div class="objective">
+                <div class="amount">1000000 USD</div>
+                <div class="label">Campaign Objective</div>
+              </div>
+            </div>
+            <div class="campaign-actions">
+              <a href="#" class="support-btn"><i class="fas fa-hand-holding-heart"></i> Support Now</a>
+              <a href="#" class="read-more"><i class="fas fa-arrow-right"></i> Read More</a>
+            </div>
+          </div>
+        </div>
 
+        <!-- Campaign Card 2 - Loaf of Relief -->
+        <div class="campaign-card">
+          <div class="campaign-image">
+            <img src="https://i.imgur.com/2BjmcwA.jpg" alt="Loaf Of Relief">
+            <div class="campaign-badge">Urgent</div>
+          </div>
+          <div class="campaign-content">
+            <h3 class="campaign-title">Loaf Of Relief</h3>
+            <div class="organization">
+              <img src="https://i.imgur.com/zGfZwK2.png" alt="Sanady Global" class="org-logo">
+              <span class="org-name">Sanady Global</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 203%"></div>
+              </div>
+              <div class="progress-text">203%</div>
+            </div>
+            <div class="campaign-stats">
+              <div class="collected">
+                <div class="amount">5070.11 USD</div>
+                <div class="label">Collected</div>
+              </div>
+              <div class="objective">
+                <div class="amount">2500 USD</div>
+                <div class="label">Campaign Objective</div>
+              </div>
+            </div>
+            <div class="campaign-actions">
+              <a href="#" class="support-btn"><i class="fas fa-hand-holding-heart"></i> Support Now</a>
+              <a href="#" class="read-more"><i class="fas fa-arrow-right"></i> Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaign Card 3 - Qawafil Australia -->
+        <div class="campaign-card">
+          <div class="campaign-image">
+            <img src="https://images.unsplash.com/photo-1607153333879-c174d265f1d2?w=800&auto=format&fit=crop" alt="Qawafil Australia">
+            <div class="campaign-badge">Urgent</div>
+          </div>
+          <div class="campaign-content">
+            <h3 class="campaign-title">Qawafil Australia / Ust. Dalya Ayoub</h3>
+            <div class="organization">
+              <img src="https://i.imgur.com/QKMY7Y5.png" alt="قوافل الخير" class="org-logo">
+              <span class="org-name">قوافل الخير</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 101%"></div>
+              </div>
+              <div class="progress-text">101%</div>
+            </div>
+            <div class="campaign-stats">
+              <div class="collected">
+                <div class="amount">1006537.55 USD</div>
+                <div class="label">Collected</div>
+              </div>
+              <div class="objective">
+                <div class="amount">1000000 USD</div>
+                <div class="label">Campaign Objective</div>
+              </div>
+            </div>
+            <div class="campaign-actions">
+              <a href="#" class="support-btn"><i class="fas fa-hand-holding-heart"></i> Support Now</a>
+              <a href="#" class="read-more"><i class="fas fa-arrow-right"></i> Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaign Card 4 - Water Well Project -->
+        <div class="campaign-card">
+          <div class="campaign-image">
+            <img src="https://images.unsplash.com/photo-1594398901394-4e34939a4fd0?w=800&auto=format&fit=crop" alt="Water Well Project">
+            <div class="campaign-badge">Urgent</div>
+          </div>
+          <div class="campaign-content">
+            <h3 class="campaign-title">Water Well Project: Clean Water for Villages</h3>
+            <div class="organization">
+              <img src="https://i.imgur.com/zGfZwK2.png" alt="Sanady Global" class="org-logo">
+              <span class="org-name">Sanady Global</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 75%"></div>
+              </div>
+              <div class="progress-text">75%</div>
+            </div>
+            <div class="campaign-stats">
+              <div class="collected">
+                <div class="amount">15750.00 USD</div>
+                <div class="label">Collected</div>
+              </div>
+              <div class="objective">
+                <div class="amount">21000 USD</div>
+                <div class="label">Campaign Objective</div>
+              </div>
+            </div>
+            <div class="campaign-actions">
+              <a href="#" class="support-btn"><i class="fas fa-hand-holding-heart"></i> Support Now</a>
+              <a href="#" class="read-more"><i class="fas fa-arrow-right"></i> Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campaign Card 5 - Education for Children -->
+        <div class="campaign-card">
+          <div class="campaign-image">
+            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop" alt="Education for Children">
+            <div class="campaign-badge">Urgent</div>
+          </div>
+          <div class="campaign-content">
+            <h3 class="campaign-title">Education for Children in Need</h3>
+            <div class="organization">
+              <img src="https://i.imgur.com/QKMY7Y5.png" alt="قوافل الخير" class="org-logo">
+              <span class="org-name">قوافل الخير</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 88%"></div>
+              </div>
+              <div class="progress-text">88%</div>
+            </div>
+            <div class="campaign-stats">
+              <div class="collected">
+                <div class="amount">44000 USD</div>
+                <div class="label">Collected</div>
+              </div>
+              <div class="objective">
+                <div class="amount">50000 USD</div>
+                <div class="label">Campaign Objective</div>
+              </div>
+            </div>
+            <div class="campaign-actions">
+              <a href="#" class="support-btn"><i class="fas fa-hand-holding-heart"></i> Support Now</a>
+              <a href="#" class="read-more"><i class="fas fa-arrow-right"></i> Read More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button class="carousel-nav next-btn">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Quick Donation Button -->
+    <div class="quick-donation">
+      <button class="quick-donation-btn">
+        <i class="fas fa-hand-holding-heart"></i> Quick Donation
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Impact Section -->
+<section class="impact-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Notre Impact</h2>
+      <p class="section-subtitle">Grâce à votre généreux soutien, nous avons pu réaliser un changement significatif dans la vie de milliers de personnes.</p>
+    </div>
+
+    <div class="impact-grid">
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-utensils"></i>
+        </div>
+        <div class="impact-number">840,000+</div>
+        <div class="impact-text">Repas servis</div>
+      </div>
+
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-house-medical"></i>
+        </div>
+        <div class="impact-number">23,000+</div>
+        <div class="impact-text">Soins médicaux fournis</div>
+      </div>
+
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-droplet"></i>
+        </div>
+        <div class="impact-number">120,000+</div>
+        <div class="impact-text">Personnes avec accès à l'eau</div>
+      </div>
+
+      <div class="impact-item">
+        <div class="impact-icon">
+          <i class="fas fa-school"></i>
+        </div>
+        <div class="impact-number">35,000+</div>
+        <div class="impact-text">Enfants scolarisés</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Cause -->
+<section class="featured-cause">
+  <div class="featured-content">
+    <h2 class="featured-title">La crise humanitaire à Gaza continue</h2>
+    <p class="featured-description">La situation à Gaza reste critique avec des besoins urgents en nourriture, eau potable, médicaments et abris. Votre soutien est plus important que jamais pour aider les familles touchées par cette crise sans précédent.</p>
+    <div class="featured-buttons">
+      <a href="#" class="action-button btn-primary">Comment vous pouvez aider</a>
+      <a href="#" class="action-button btn-white">Faire un don maintenant</a>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-pretitle">TÉMOIGNAGES</div>
+      <h2 class="section-title">Ce que disent nos bénéficiaires</h2>
+      <p class="section-subtitle">Découvrez comment votre soutien transforme des vies et fait une réelle différence sur le terrain.</p>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">❝</div>
+        <p class="testimonial-text">Grâce au soutien de SANADY, notre village a maintenant accès à l'eau potable. La différence que cela a fait dans la vie de nos enfants est inestimable.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80" alt="Fatima K." class="author-avatar">
+          <div class="author-info">
+            <h4 class="author-name">Fatima K.</h4>
+            <p class="author-role">Bénéficiaire, Jordanie</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">❝</div>
+        <p class="testimonial-text">Donner à SANADY m'a permis de voir l'impact direct de ma contribution. Leur transparence et leur engagement pour chaque cause est admirable.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=200&q=80" alt="Ahmed S." class="author-avatar">
+          <div class="author-info">
+            <h4 class="author-name">Ahmed S.</h4>
+            <p class="author-role">Donateur régulier</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">❝</div>
+        <p class="testimonial-text">En tant que bénévole pour SANADY, j'ai pu constater de mes propres yeux la différence que font les dons sur le terrain. Chaque contribution compte vraiment.</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80" alt="Sarah M." class="author-avatar">
+          <div class="author-info">
+            <h4 class="author-name">Sarah M.</h4>
+            <p class="author-role">Bénévole</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Partners Section -->
+<section class="partners-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-pretitle">PARTENAIRES</div>
+      <h2 class="section-title">Ils nous font confiance</h2>
+      <p class="section-subtitle">Découvrez les organisations et entreprises qui soutiennent notre mission et contribuent à nos côtés.</p>
+    </div>
+
+    <div class="partners-grid">
+      <div class="partner-logo">
+        <img src="https://i.imgur.com/1Xj6j6Y.png" alt="Partner Logo 1">
+      </div>
+
+      <div class="partner-logo">
+        <img src="https://i.imgur.com/2Xj6j6Y.png" alt="Partner Logo 2">
+      </div>
+
+      <div class="partner-logo">
+        <img src="https://i.imgur.com/3Xj6j6Y.png" alt="Partner Logo 3">
+      </div>
+
+      <div class="partner-logo">
+        <img src="https://i.imgur.com/4Xj6j6Y.png" alt="Partner Logo 4">
+      </div>
+
+      <div class="partner-logo">
+        <img src="https://i.imgur.com/5Xj6j6Y.png" alt="Partner Logo 5">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-column">
+        <h3>À propos de SANADY</h3>
+        <p style="margin-bottom: 15px; color: #B0BEC5; line-height: 1.6;">SANADY est une organisation humanitaire dédiée à fournir de l'aide et du soutien aux personnes dans le besoin à travers le monde.</p>
+        <div class="social-links">
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h3>Liens rapides</h3>
+        <ul class="footer-links">
+          <li><a href="#">Accueil</a></li>
+          <li><a href="#">Qui sommes-nous</a></li>
+          <li><a href="#">Nos campagnes</a></li>
+          <li><a href="#">Comment aider</a></li>
+          <li><a href="#">Actualités</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Nos campagnes</h3>
+        <ul class="footer-links">
+          <li><a href="#">Soutien à Gaza</a></li>
+          <li><a href="#">Eau potable pour tous</a></li>
+          <li><a href="#">Éducation des enfants</a></li>
+          <li><a href="#">Aide médicale d'urgence</a></li>
+          <li><a href="#">Secours alimentaire</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Contact</h3>
+        <ul class="footer-links">
+          <li><i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i> 123 Rue de la Charité, 75001 Paris</li>
+          <li><i class="fas fa-phone" style="margin-right: 8px;"></i> +33 1 23 45 67 89</li>
+          <li><i class="fas fa-envelope" style="margin-right: 8px;"></i> contact@sanady.org</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <p>&copy; 2025 SANADY. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function changeLanguage(langCode) {
+    document.getElementById('htmlRoot').setAttribute('lang', langCode);
+
+    const allLangElements = document.querySelectorAll('[data-lang]');
+    allLangElements.forEach(el => {
+      el.classList.remove('active');
+    });
+
+    const newActiveLangElements = document.querySelectorAll(`[data-lang="${langCode}"]`);
+    newActiveLangElements.forEach(el => {
+      el.classList.add('active');
+    });
+
+    const langItems = document.querySelectorAll('.dropdown-item[data-lang-code]');
+    langItems.forEach(item => {
+      item.classList.remove('lang-active');
+    });
+    document.querySelector(`.dropdown-item[data-lang-code="${langCode}"]`).classList.add('lang-active');
+
+    const flagSrc = {
+      'fr': 'https://flagcdn.com/fr.svg',
+      'ar': 'https://flagcdn.com/sa.svg',
+      'en': 'https://flagcdn.com/gb.svg'
+    };
+
+    document.getElementById('currentFlag').src = flagSrc[langCode];
+
+    if (langCode === 'ar') {
+      document.body.classList.add('rtl');
+    } else {
+      document.body.classList.remove('rtl');
+    }
+
+    localStorage.setItem('preferredLanguage', langCode);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const storedLang = localStorage.getItem('preferredLanguage');
+    if (storedLang) {
+      changeLanguage(storedLang);
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const slider = document.querySelector('.campaign-slider');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    
+    // Vérifier si les éléments existent
+    if (slider && prevBtn && nextBtn) {
+      // Calculer la largeur à faire défiler (carte + marge)
+      const cardWidth = slider.querySelector('.campaign-card').offsetWidth + 25;
+      let scrollAmount = 0;
+      
+      // Fonction pour vérifier si on peut défiler plus
+      function checkButtonVisibility() {
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+        prevBtn.style.opacity = slider.scrollLeft <= 10 ? '0.5' : '1';
+        nextBtn.style.opacity = slider.scrollLeft >= maxScroll - 10 ? '0.5' : '1';
+      }
+      
+      // Défilement vers la gauche
+      prevBtn.addEventListener('click', function() {
+        slider.scrollBy({
+          left: -cardWidth * 2,
+          behavior: 'smooth'
+        });
+        setTimeout(checkButtonVisibility, 350);
+      });
+      
+      // Défilement vers la droite
+      nextBtn.addEventListener('click', function() {
+        slider.scrollBy({
+          left: cardWidth * 2,
+          behavior: 'smooth'
+        });
+        setTimeout(checkButtonVisibility, 350);
+      });
+      
+      // Vérifier l'état initial
+      checkButtonVisibility();
+      
+      // Vérifier lors du défilement manuel
+      slider.addEventListener('scroll', checkButtonVisibility);
+    }
+  });
+</script>
 </body>
 </html>

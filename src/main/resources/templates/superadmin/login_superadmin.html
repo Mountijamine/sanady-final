@@ -3,29 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion Super Admin</title>
+    <title>Connexion Super Admin | SANADY</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-light: #A5D6A7;
+            --primary-dark: #388E3C;
+            --text-dark: #344767;
+            --text-light: #546E7A;
+            --bg-light: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+        }
+        
+        .login-container {
+            display: flex;
+            width: 900px;
+            height: 550px;
+            max-width: 95%;
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .login-image {
+            width: 50%;
+            background: linear-gradient(rgba(56, 142, 60, 0.85), rgba(76, 175, 80, 0.9)), 
+                        url('https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1000&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 40px;
+            position: relative;
+        }
+        
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .login-image h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .login-image p {
+            font-size: 16px;
+            opacity: 0.9;
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .login-image .decorative-dots {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+        }
+        
+        .decorative-dots .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            margin: 0 5px;
+        }
+        
+        .decorative-dots .dot.active {
+            background-color: white;
+            transform: scale(1.5);
+        }
+        
+        .login-form {
+            width: 50%;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .form-header {
+            margin-bottom: 40px;
+        }
+        
+        .form-header h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: var(--text-light);
+            font-size: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-control {
+            height: 55px;
+            padding-left: 45px;
+            padding-right: 15px;
+            font-size: 15px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            background-color: #f9f9f9;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 18px;
+        }
+        
+        .btn-login {
+            height: 55px;
+            background-color: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-login:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .form-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-light);
+            text-align: center;
+        }
+        
+        .form-text a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .form-text a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-danger {
+            background-color: #FEEEEF;
+            border-color: #FEEEEF;
+            color: #F64E60;
+        }
+        
+        .remember-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin-top: 0;
+            cursor: pointer;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .form-check-label {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        
+        .forgot-link {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .forgot-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .login-image {
+                width: 100%;
+                padding: 30px;
+                min-height: 200px;
+            }
+            
+            .login-form {
+                width: 100%;
+                padding: 30px;
+            }
+            
+            .brand-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+            
+            .login-image h2 {
+                font-size: 22px;
+            }
+            
+            .login-image p {
+                font-size: 14px;
+            }
+            
+            .form-header h3 {
+                font-size: 20px;
+            }
+            
+            .form-header p {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>Connexion Super Admin</h1>
-
-<div th:if="${message}" th:text="${message}" style="color: red;"></div>
-
-<form action="/auth/login/superadmin" method="POST">
-    <div>
-        <label for="username">Email :</label>
-        <input type="email" id="username" name="username" required />
+    <div class="login-container">
+        <div class="login-image">
+            <div class="brand-logo">S</div>
+            <h2>SANADY Admin</h2>
+            <p>Plateforme de gestion des campagnes humanitaires et des organisations caritatives</p>
+            <div class="decorative-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+        
+        <div class="login-form">
+            <div class="form-header">
+                <h3>Connexion Super Admin</h3>
+                <p>Entrez vos identifiants pour accéder à votre compte</p>
+            </div>
+            
+            <div th:if="${message}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${message}"></span>
+            </div>
+            
+            <form action="/auth/login/superadmin" method="POST">
+                <div class="form-group">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" class="form-control" id="username" name="username" placeholder="Adresse email" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe" required>
+                </div>
+                
+                <div class="remember-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" name="remember-me">
+                        <label class="form-check-label" for="rememberMe">
+                            Se souvenir de moi
+                        </label>
+                    </div>
+                    <a href="/auth/forgot-password" class="forgot-link">Mot de passe oublié?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Se connecter
+                </button>
+            </form>
+            
+            <div class="form-text">
+                <p>Vous n'avez pas de compte? <a th:href="@{/auth/register/superadmin}">Inscrivez-vous ici</a></p>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="password" required />
-    </div>
-    <div>
-        <button type="submit">Se connecter</button>
-    </div>
-</form>
 
-<p>
-    Vous n'avez pas de compte ? <a th:href="@{/auth/register/superadmin}">Inscrivez-vous ici</a>.
-</p>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

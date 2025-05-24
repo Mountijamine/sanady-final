@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 public class ActionCharite {
 
     @Id
-    private String idAction; // Utilisation de String pour la compatibilité avec MongoDB
+    private String idAction;
 
     @NotBlank(message = "Le titre est obligatoire")
     @Size(max = 100, message = "Le titre ne doit pas dépasser 100 caractères")
@@ -23,7 +24,9 @@ public class ActionCharite {
     private String description;
 
     @NotNull(message = "La date est obligatoire")
-    private Date date;
+    private Date dateAction; // Renommé pour correspondre au setter dans le contrôleur
+    
+    private Date dateCreation; // Date de création de l'action
 
     @NotBlank(message = "Le lieu est obligatoire")
     @Size(max = 100, message = "Le lieu ne doit pas dépasser 100 caractères")
@@ -35,18 +38,24 @@ public class ActionCharite {
     @PositiveOrZero(message = "Le montant actuel ne peut pas être négatif")
     private float montantActuel;
 
-    private int nombreParticipants; // Suivi du nombre de participants
+    private int nombreParticipants;
 
-    private List<String> mediaUrls; // URLs des médias (images, vidéos)
+    private List<String> mediaUrls;
 
     @NotNull(message = "La catégorie est obligatoire")
-    private String categorieId; // Référence à la catégorie
-    private List<String> likedByUsers;
+    private String categorie; // Renommé pour correspondre au setter dans le contrôleur
+    
+    private boolean active; // Indique si l'action est active ou terminée
 
-    private List<Utilisateurs> listUsersContribue;
-    private List<Don> listedons;
-    private String OrganisationId;
-    // Getters et setters
+    private List<String> likedByUsers = new ArrayList<>(); // Initialisation pour éviter NPE
+
+    private List<Utilisateurs> listUsersContribue = new ArrayList<>();
+    
+    private List<Don> listedons = new ArrayList<>();
+    
+    private String organisationId; // Renommé pour suivre la convention Java
+    
+    // Getters et setters mis à jour
     public String getIdAction() {
         return idAction;
     }
@@ -71,12 +80,30 @@ public class ActionCharite {
         this.description = description;
     }
 
+    // Méthodes pour dateAction (anciennement date)
+    public Date getDateAction() {
+        return dateAction;
+    }
+
+    public void setDateAction(Date dateAction) {
+        this.dateAction = dateAction;
+    }
+    
+    // Alias pour maintenir la compatibilité avec le code existant
     public Date getDate() {
-        return date;
+        return dateAction;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.dateAction = date;
+    }
+    
+    public Date getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
     }
 
     public String getLieu() {
@@ -119,13 +146,32 @@ public class ActionCharite {
         this.mediaUrls = mediaUrls;
     }
 
+    // Méthodes pour categorie (anciennement categorieId)
+    public String getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(String categorie) {
+        this.categorie = categorie;
+    }
+    
+    // Alias pour maintenir la compatibilité avec le code existant
     public String getCategorieId() {
-        return categorieId;
+        return categorie;
     }
 
     public void setCategorieId(String categorieId) {
-        this.categorieId = categorieId;
+        this.categorie = categorieId;
     }
+    
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    
     public List<String> getLikedByUsers() {
         return likedByUsers;
     }
@@ -150,23 +196,29 @@ public class ActionCharite {
         this.listedons = listedons;
     }
 
+    // Méthodes pour organisationId (anciennement OrganisationId)
     public String getOrganisationId() {
-        return OrganisationId;
+        return organisationId;
     }
 
     public void setOrganisationId(String organisationId) {
-        OrganisationId = organisationId;
+        this.organisationId = organisationId;
     }
 
-    // Méthode pour ajouter un like
+    // Méthode pour ajouter un like - sécurisée contre les NPE
     public void ajouterLike(String userId) {
+        if (this.likedByUsers == null) {
+            this.likedByUsers = new ArrayList<>();
+        }
         if (!this.likedByUsers.contains(userId)) {
             this.likedByUsers.add(userId);
         }
     }
 
-    // Méthode pour supprimer un like
+    // Méthode pour supprimer un like - sécurisée contre les NPE
     public void supprimerLike(String userId) {
-        this.likedByUsers.remove(userId);
+        if (this.likedByUsers != null) {
+            this.likedByUsers.remove(userId);
+        }
     }
 }

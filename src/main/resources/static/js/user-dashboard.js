@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("User dashboard script loaded"); // Debug line
+
     // Dropdown functionality
     const dropdownToggle = document.getElementById('dropdownToggle');
     const dropdownContent = document.querySelector('.dropdown-content');
@@ -48,18 +50,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileError = document.body.getAttribute('data-profile-error');
 
     // Check if modal elements exist
-    if (modal && profileView && editProfileForm && passwordForm) {
+    if (modal && profileView) {
         // Check if we need to show error forms
         if ((hasPasswordError || passwordError) && passwordError !== 'null') {
             modal.style.display = 'block';
             profileView.style.display = 'none';
-            editProfileForm.style.display = 'none';
-            passwordForm.style.display = 'block';
+            if (editProfileForm) editProfileForm.style.display = 'none';
+            if (passwordForm) passwordForm.style.display = 'block';
         } else if ((hasProfileError || profileError) && profileError !== 'null') {
             modal.style.display = 'block';
             profileView.style.display = 'none';
-            editProfileForm.style.display = 'block';
-            passwordForm.style.display = 'none';
+            if (editProfileForm) editProfileForm.style.display = 'block';
+            if (passwordForm) passwordForm.style.display = 'none';
         }
 
         // Show modal when clicking "Modifier profil"
@@ -70,8 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 modal.style.display = 'block';
                 // Always show the profile view first
                 profileView.style.display = 'block';
-                editProfileForm.style.display = 'none';
-                passwordForm.style.display = 'none';
+                if (editProfileForm) editProfileForm.style.display = 'none';
+                if (passwordForm) passwordForm.style.display = 'none';
 
                 // Close the dropdown
                 if (dropdownContent) {
@@ -95,19 +97,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Show edit profile form when clicking "Modifier" button
-        if (modifyBtn) {
+        if (modifyBtn && editProfileForm) {
             modifyBtn.addEventListener('click', function() {
                 profileView.style.display = 'none';
                 editProfileForm.style.display = 'block';
-                passwordForm.style.display = 'none';
+                if (passwordForm) passwordForm.style.display = 'none';
             });
         }
 
         // Show password form when clicking "Modifier mot de passe" button
-        if (passwordBtn) {
+        if (passwordBtn && passwordForm) {
             passwordBtn.addEventListener('click', function() {
                 profileView.style.display = 'none';
-                editProfileForm.style.display = 'none';
+                if (editProfileForm) editProfileForm.style.display = 'none';
                 passwordForm.style.display = 'block';
             });
         }
@@ -116,16 +118,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (cancelEditBtn) {
             cancelEditBtn.addEventListener('click', function() {
                 profileView.style.display = 'block';
-                editProfileForm.style.display = 'none';
-                passwordForm.style.display = 'none';
+                if (editProfileForm) editProfileForm.style.display = 'none';
+                if (passwordForm) passwordForm.style.display = 'none';
             });
         }
 
         if (cancelPasswordBtn) {
             cancelPasswordBtn.addEventListener('click', function() {
                 profileView.style.display = 'block';
-                editProfileForm.style.display = 'none';
-                passwordForm.style.display = 'none';
+                if (editProfileForm) editProfileForm.style.display = 'none';
+                if (passwordForm) passwordForm.style.display = 'none';
             });
         }
     } else {
